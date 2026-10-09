@@ -1,58 +1,106 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# BEM Saintek — Sistem Informasi Organisasi Kampus
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+> Web profil publik + dashboard admin untuk BEM Fakultas Sains & Teknologi: kelola departemen, proker, informasi, pendaftaran pengurus, keuangan, iuran, absensi kegiatan, user & role.
 
-## About Laravel
+![Laravel](https://img.shields.io/badge/Laravel-13-red?logo=laravel)
+![PHP](https://img.shields.io/badge/PHP-8.3-blue?logo=php)
+![Inertia](https://img.shields.io/badge/Inertia.js-v3-purple)
+![Vue](https://img.shields.io/badge/Vue-3-green?logo=vue.js)
+![Tailwind](https://img.shields.io/badge/Tailwind-4-38bdf8?logo=tailwindcss)
+![Status](https://img.shields.io/badge/status-in%20progress-yellow)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+**Status:** 🚧 In Progress — fitur inti jalan, pengembangan bertahap. Lihat [Roadmap](#roadmap).
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Kenapa repo ini ada?
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+BEM butuh satu pintu: pengunjung bisa lihat profil, HIMA, lab, proker & info lomba — pengurus bisa kerja admin (rekrutmen, kas, absensi) tanpa spreadsheet terpisah. Project ini saya bangun sebagai portfolio fullstack.
 
-## Learning Laravel
+## Fitur
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 🌐 Publik (tanpa login)
+- Landing modern: hero, statistik, departemen, proker, testimoni, CTA Join Us
+- Profil: struktural, visi-misi, sejarah, laboratorium
+- HIMA per prodi: Himatif, Himasi, Himakom, Himars, Himabp, Himathp
+- Informasi: berita, infografis, penghargaan, lomba (`/information/{slug}`)
+- Program kerja & detail departemen
+- Halaman Join With Us + kontak
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 🔐 Dashboard (login)
+- Dashboard analitik: chart kehadiran, rekap prodi, riwayat user
+- **Pendaftaran pengurus:** form mahasiswa, verifikasi pengurus, gelombang/periode, status seleksi
+- **Keuangan bendahara:** uang masuk/keluar, saldo, halaman rekap
+- **Iuran/kas:** tagihan per anggota, bisa cicil, tiap bayar otomatis masuk kas
+- **Kegiatan & absensi:** absen cepat pakai keyboard, tandai alpa massal, rekap skor pelanggaran, export/import
+- **Master data:** departemen, program kerja, informasi
+- **RBAC (Spatie):** user, role, permission (`kelola-pengguna`, `kelola-keuangan`, `kelola-absensi`, dll)
+- **Activity Log:** append-only, siapa ngapain kapan (tanpa tombol edit/hapus)
+- Profil saya: edit identitas sendiri
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+Role bawaan: `admin` / `pengurus` / `mahasiswa` (lihat `database/seeders/RolesAndPermissionsSeeder.php`).
 
-## Agentic Development
+## Tech Stack
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+- **Backend:** Laravel 13, PHP 8.3, Spatie Permission, Eloquent ORM
+- **Frontend:** Inertia.js v3 + Vue 3 + Vite 6 + Tailwind CSS 4
+- **DB:** MySQL (dev bisa SQLite) — migrasi di `database/migrations/`
+- **Test:** PHPUnit — `tests/Feature/` (Absensi, Keuangan, Departemen, Role, ActivityLog)
+
+## Cara Jalanin Lokal
 
 ```bash
-composer require laravel/boost --dev
+# 1. Clone
+git clone https://github.com/arwani-svg/bem-saintek.git
+cd bem-saintek
 
-php artisan boost:install
+# 2. Setup sekali jalan (install, .env, key, migrate, build)
+composer setup
+
+# 3. Jalanin dev (server + vite)
+composer dev
+# atau manual:
+# php artisan serve
+# npm run dev
+
+# 4. (opsional) Seeder awal
+php artisan migrate --seed
+
+# 5. Test
+php artisan test
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Butuh `.env` sendiri: copy dari `.env.example`, isi `DB_*`. File `.env` tidak di-commit.
 
-## Contributing
+## Struktur Singkat
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```
+app/Http/Controllers/  -> Auth, Dashboard, Departemen, Proker, Informasi,
+                           Keuangan, Iuran, Kegiatan(absensi), Pendaftaran, RolePermission
+resources/js/Pages/    -> Publik (Home, Profile, Join) + Admin/* + Auth + Dashboard
+resources/js/components/ -> sections (Hero, Navbar, Footer...), dashboard (Sidebar, Charts...), ui
+routes/web.php         -> rute publik + grup auth/permission/role
+database/              -> migrations + seeders (departemen, role-permission)
+tests/                 -> feature test per modul
+desain/                -> mockup html awal (dashboard, profile, popup)
+```
 
-## Code of Conduct
+## Roadmap
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- [x] Auth + RBAC + dashboard base
+- [x] CRUD departemen, proker, informasi
+- [x] Pendaftaran + gelombang seleksi
+- [x] Keuangan + iuran cicilan
+- [x] Kegiatan + absensi cepat + rekap
+- [ ] Upload bukti bayar / QR absensi
+- [ ] Notifikasi WA/email status seleksi
+- [ ] Screenshot demo + deploy (VPS/Vercel backend)
+- [ ] Perapihan test coverage >80%
 
-## Security Vulnerabilities
+## Screenshot
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+> Taruh di sini setelah UI stabil. Mockup awal ada di folder `desain/` (`dashboard.html`, `profile.html`).
+> Saran: `docs/screenshot-home.png`, `docs/screenshot-dashboard.png`, `docs/screenshot-absensi.png`
 
-## License
+## Dibangun Oleh
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+**Arwani** — Fullstack (Laravel + Vue) — [@arwani-svg](https://github.com/arwani-svg)
+Portfolio project. Kritik/saran via Issues sangat welcome.
