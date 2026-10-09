@@ -1,0 +1,3656 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>BEM SAINTEK — Beyond Limits</title>
+
+  <meta
+    name="description"
+    content="BEM SAINTEK — Beyond Limits. Science, Technology, Collaboration and Impact."
+  />
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ["DM Sans", "sans-serif"],
+            display: ["Space Grotesk", "sans-serif"],
+            mono: ["DM Mono", "monospace"]
+          },
+          colors: {
+            void: "#03050A",
+            cyanx: "#22D3EE",
+            bluex: "#3B82F6",
+            violetx: "#8B5CF6"
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* =========================================================
+       CORE
+    ========================================================= */
+
+    :root {
+      --bg: #03050a;
+      --cyan: #22d3ee;
+      --blue: #3b82f6;
+      --violet: #8b5cf6;
+      --white: #f8fafc;
+    }
+
+    * {
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+    }
+
+    html {
+      background: var(--bg);
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(
+          circle at 50% -10%,
+          rgba(34, 211, 238, .08),
+          transparent 28%
+        ),
+        var(--bg);
+      color: white;
+      overflow-x: hidden;
+    }
+
+    ::selection {
+      background: rgba(34,211,238,.35);
+      color: white;
+    }
+
+    ::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #03050a;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(var(--cyan), var(--violet));
+      border-radius: 99px;
+    }
+
+    /* =========================================================
+       BACKGROUND
+    ========================================================= */
+
+    .grid {
+      background-image:
+        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      background-size: 55px 55px;
+    }
+
+    .grid-small {
+      background-image:
+        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+      background-size: 25px 25px;
+    }
+
+    .noise {
+      position: fixed;
+      inset: 0;
+      z-index: 90;
+      pointer-events: none;
+      opacity: .025;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    .glow-cyan {
+      box-shadow:
+        0 0 30px rgba(34,211,238,.08),
+        0 0 90px rgba(34,211,238,.04);
+    }
+
+    .glow-violet {
+      box-shadow:
+        0 0 30px rgba(139,92,246,.08),
+        0 0 90px rgba(139,92,246,.04);
+    }
+
+    .gradient-text {
+      background:
+        linear-gradient(
+          105deg,
+          #fff 5%,
+          #67e8f9 42%,
+          #818cf8 75%,
+          #c4b5fd
+        );
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    /* =========================================================
+       PARTICLES
+    ========================================================= */
+
+    #particleCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: .75;
+    }
+
+    #heroGlow {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(
+        circle,
+        rgba(34,211,238,.09),
+        rgba(59,130,246,.03) 35%,
+        transparent 70%
+      );
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      filter: blur(10px);
+    }
+
+    /* =========================================================
+       CURSOR
+    ========================================================= */
+
+    #cursorDot,
+    #cursorRing {
+      position: fixed;
+      pointer-events: none;
+      z-index: 999;
+      transform: translate(-50%, -50%);
+    }
+
+    #cursorDot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 0 15px var(--cyan);
+    }
+
+    #cursorRing {
+      width: 32px;
+      height: 32px;
+      border: 1px solid rgba(34,211,238,.55);
+      border-radius: 50%;
+      transition:
+        width .25s ease,
+        height .25s ease,
+        border-color .25s ease,
+        background .25s ease;
+    }
+
+    body.cursor-hover #cursorRing {
+      width: 65px;
+      height: 65px;
+      border-color: rgba(34,211,238,.85);
+      background: rgba(34,211,238,.04);
+    }
+
+    @media (max-width: 900px) {
+      #cursorDot,
+      #cursorRing {
+        display: none;
+      }
+    }
+
+    /* =========================================================
+       NAV
+    ========================================================= */
+
+    #nav {
+      transition:
+        background .4s ease,
+        border-color .4s ease,
+        backdrop-filter .4s ease;
+    }
+
+    #nav.scrolled {
+      background: rgba(3,5,10,.72);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,.07);
+    }
+
+    /* =========================================================
+       REVEALS
+    ========================================================= */
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(45px);
+      transition:
+        opacity .9s cubic-bezier(.2,.8,.2,1),
+        transform .9s cubic-bezier(.2,.8,.2,1);
+    }
+
+    .reveal.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-left {
+      opacity: 0;
+      transform: translateX(-50px);
+      transition:
+        opacity .9s ease,
+        transform .9s cubic-bezier(.2,.8,.2,1);
+    }
+
+    .reveal-left.show {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .reveal-right {
+      opacity: 0;
+      transform: translateX(50px);
+      transition:
+        opacity .9s ease,
+        transform .9s cubic-bezier(.2,.8,.2,1);
+    }
+
+    .reveal-right.show {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* =========================================================
+       HERO
+    ========================================================= */
+
+    .hero-title {
+      font-size: clamp(4rem, 12vw, 11rem);
+      line-height: .79;
+      letter-spacing: -.075em;
+    }
+
+    .hero-word {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(80px);
+      animation: heroWord 1s cubic-bezier(.16,1,.3,1) forwards;
+    }
+
+    .hero-word:nth-child(1) {
+      animation-delay: .2s;
+    }
+
+    .hero-word:nth-child(2) {
+      animation-delay: .34s;
+    }
+
+    .hero-word:nth-child(3) {
+      animation-delay: .48s;
+    }
+
+    @keyframes heroWord {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero-line {
+      width: 0;
+      animation: lineGrow 1.2s cubic-bezier(.16,1,.3,1) .8s forwards;
+    }
+
+    @keyframes lineGrow {
+      to {
+        width: 100%;
+      }
+    }
+
+    .blink {
+      animation: blink 1s steps(1) infinite;
+    }
+
+    @keyframes blink {
+      50% {
+        opacity: 0;
+      }
+    }
+
+    /* =========================================================
+       TERMINAL
+    ========================================================= */
+
+    .terminal {
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255,255,255,.045),
+          rgba(255,255,255,.015)
+        );
+      border: 1px solid rgba(255,255,255,.09);
+      box-shadow:
+        0 30px 100px rgba(0,0,0,.4),
+        inset 0 1px rgba(255,255,255,.04);
+      backdrop-filter: blur(20px);
+    }
+
+    .terminal-line {
+      opacity: 0;
+      animation: terminalIn .6s ease forwards;
+    }
+
+    @keyframes terminalIn {
+      to {
+        opacity: 1;
+      }
+    }
+
+    /* =========================================================
+       DNA
+    ========================================================= */
+
+    .dna-strand {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      left: 0;
+      top: 0;
+    }
+
+    .dna-node {
+      position: absolute;
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      background: #03050a;
+      border: 1px solid rgba(34,211,238,.8);
+      box-shadow:
+        0 0 0 5px rgba(34,211,238,.04),
+        0 0 25px rgba(34,211,238,.3);
+      transition: .4s ease;
+      z-index: 3;
+    }
+
+    .dna-node:hover {
+      transform: scale(1.5);
+      background: var(--cyan);
+      box-shadow:
+        0 0 0 8px rgba(34,211,238,.05),
+        0 0 40px rgba(34,211,238,.7);
+    }
+
+    .dna-rung {
+      position: absolute;
+      height: 1px;
+      background: linear-gradient(
+        90deg,
+        rgba(34,211,238,.15),
+        rgba(139,92,246,.5),
+        rgba(34,211,238,.15)
+      );
+      transform-origin: left center;
+    }
+
+    /* =========================================================
+       GLASS
+    ========================================================= */
+
+    .glass {
+      background: rgba(255,255,255,.025);
+      border: 1px solid rgba(255,255,255,.07);
+      backdrop-filter: blur(16px);
+    }
+
+    .glass:hover {
+      border-color: rgba(34,211,238,.25);
+      background: rgba(255,255,255,.045);
+    }
+
+    /* =========================================================
+       CONSTELLATION
+    ========================================================= */
+
+    .constellation {
+      position: relative;
+      height: 650px;
+    }
+
+    .constellation-line {
+      position: absolute;
+      height: 1px;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(34,211,238,.3),
+        transparent
+      );
+      transform-origin: left center;
+    }
+
+    .constellation-node {
+      position: absolute;
+      width: 92px;
+      height: 92px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      z-index: 5;
+      transition:
+        transform .4s cubic-bezier(.2,.8,.2,1),
+        border-color .4s,
+        background .4s,
+        box-shadow .4s;
+    }
+
+    .constellation-node:hover {
+      transform: scale(1.16);
+      background: rgba(34,211,238,.08);
+      border-color: rgba(34,211,238,.8);
+      box-shadow:
+        0 0 0 12px rgba(34,211,238,.025),
+        0 0 50px rgba(34,211,238,.2);
+    }
+
+    .node-center {
+      width: 145px;
+      height: 145px;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%,-50%);
+      border: 1px solid rgba(34,211,238,.5);
+      background:
+        radial-gradient(
+          circle,
+          rgba(34,211,238,.12),
+          rgba(255,255,255,.02) 55%,
+          transparent
+        );
+      box-shadow:
+        0 0 70px rgba(34,211,238,.08);
+    }
+
+    .node-center:hover {
+      transform: translate(-50%,-50%) scale(1.05);
+    }
+
+    .node-1 { left: 50%; top: 5%; transform: translateX(-50%); }
+    .node-2 { left: 12%; top: 24%; }
+    .node-3 { right: 12%; top: 24%; }
+    .node-4 { left: 5%; bottom: 18%; }
+    .node-5 { right: 5%; bottom: 18%; }
+    .node-6 { left: 50%; bottom: 2%; transform: translateX(-50%); }
+
+    @media(max-width: 700px) {
+      .constellation {
+        height: 520px;
+      }
+
+      .constellation-node {
+        width: 65px;
+        height: 65px;
+        font-size: 8px;
+      }
+
+      .node-center {
+        width: 105px;
+        height: 105px;
+      }
+
+      .node-2 { left: 4%; }
+      .node-3 { right: 4%; }
+      .node-4 { left: 0; }
+      .node-5 { right: 0; }
+    }
+
+    /* =========================================================
+       MISSION DASHBOARD
+    ========================================================= */
+
+    .progress-bar {
+      position: relative;
+      height: 5px;
+      overflow: hidden;
+      background: rgba(255,255,255,.06);
+      border-radius: 99px;
+    }
+
+    .progress-bar span {
+      display: block;
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--cyan), var(--blue));
+      box-shadow: 0 0 20px rgba(34,211,238,.4);
+      transition: width 1.8s cubic-bezier(.16,1,.3,1);
+    }
+
+    /* =========================================================
+       MARQUEE
+    ========================================================= */
+
+    .marquee {
+      overflow: hidden;
+    }
+
+    .marquee-track {
+      display: flex;
+      width: max-content;
+      animation: marquee 30s linear infinite;
+    }
+
+    @keyframes marquee {
+      to {
+        transform: translateX(-50%);
+      }
+    }
+
+    /* =========================================================
+       ARCHIVE
+    ========================================================= */
+
+    .archive-item {
+      transition:
+        padding .5s ease,
+        background .5s ease,
+        border-color .5s ease;
+    }
+
+    .archive-item:hover {
+      padding-left: 35px;
+      background: rgba(255,255,255,.025);
+      border-color: rgba(34,211,238,.15);
+    }
+
+    /* =========================================================
+       IMAGE
+    ========================================================= */
+
+    .image-card {
+      overflow: hidden;
+    }
+
+    .image-card img {
+      transition:
+        transform 1s cubic-bezier(.16,1,.3,1),
+        filter 1s ease;
+    }
+
+    .image-card:hover img {
+      transform: scale(1.08);
+      filter: grayscale(0);
+    }
+
+    /* =========================================================
+       FOOTER
+    ========================================================= */
+
+    .footer-big {
+      font-size: clamp(4rem, 13vw, 12rem);
+      line-height: .8;
+      letter-spacing: -.09em;
+    }
+
+    /* =========================================================
+       MODAL
+    ========================================================= */
+
+    #deptModal {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .3s ease;
+    }
+
+    #deptModal.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    #deptModal .modal-card {
+      transform: translateY(30px) scale(.97);
+      transition: transform .4s cubic-bezier(.16,1,.3,1);
+    }
+
+    #deptModal.open .modal-card {
+      transform: translateY(0) scale(1);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Noise -->
+  <div class="noise"></div>
+
+  <!-- Cursor -->
+  <div id="cursorDot"></div>
+  <div id="cursorRing"></div>
+
+  <!-- Progress -->
+  <div
+    id="scrollProgress"
+    class="fixed top-0 left-0 h-[2px] z-[1000] w-0 bg-gradient-to-r from-cyan-300 via-blue-500 to-violet-500"
+  ></div>
+
+
+  <!-- =========================================================
+       NAVIGATION
+  ========================================================== -->
+
+  <header
+    id="nav"
+    class="fixed top-0 left-0 right-0 z-[100] border-b border-transparent"
+  >
+    <div class="max-w-7xl mx-auto px-5 lg:px-8">
+
+      <nav class="h-20 flex items-center justify-between">
+
+        <a href="#home" class="magnetic flex items-center gap-3">
+
+          <div
+            class="w-10 h-10 rounded-xl border border-cyan-300/20
+                   bg-cyan-300/5 flex items-center justify-center
+                   relative overflow-hidden"
+          >
+            <div class="absolute inset-0 bg-cyan-300/10 blur-xl"></div>
+
+            <span class="relative font-display font-bold text-cyan-300">
+              S
+            </span>
+          </div>
+
+          <div>
+            <div class="font-display font-bold tracking-tight">
+              BEM <span class="text-cyan-300">SAINTEK</span>
+            </div>
+
+            <div class="text-[8px] text-white/30 tracking-[.3em] uppercase">
+              Beyond Limits
+            </div>
+          </div>
+
+        </a>
+
+
+        <div class="hidden lg:flex items-center gap-8 text-xs text-white/45">
+
+          <a class="hover:text-white transition" href="#about">
+            About
+          </a>
+
+          <a class="hover:text-white transition" href="#values">
+            Values
+          </a>
+
+          <a class="hover:text-white transition" href="#departments">
+            Departments
+          </a>
+
+          <a class="hover:text-white transition" href="#mission">
+            Mission
+          </a>
+
+          <a class="hover:text-white transition" href="#programs">
+            Programs
+          </a>
+
+          <a class="hover:text-white transition" href="#archive">
+            Archive
+          </a>
+
+        </div>
+
+
+        <a
+          href="#join"
+          class="magnetic hidden sm:flex items-center gap-2
+                 px-5 py-2.5 rounded-full bg-white text-black
+                 text-xs font-bold hover:bg-cyan-300 transition"
+        >
+          Join Movement
+          <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+        </a>
+
+
+        <button
+          id="mobileBtn"
+          class="lg:hidden w-10 h-10 rounded-xl border border-white/10
+                 flex items-center justify-center"
+        >
+          <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+
+      </nav>
+
+
+      <!-- Mobile -->
+      <div id="mobileNav" class="hidden pb-4">
+
+        <div class="glass rounded-2xl p-3 flex flex-col">
+
+          <a href="#about" class="mobile-link px-4 py-3 text-sm text-white/60">
+            About
+          </a>
+
+          <a href="#values" class="mobile-link px-4 py-3 text-sm text-white/60">
+            Values
+          </a>
+
+          <a href="#departments" class="mobile-link px-4 py-3 text-sm text-white/60">
+            Departments
+          </a>
+
+          <a href="#mission" class="mobile-link px-4 py-3 text-sm text-white/60">
+            Mission
+          </a>
+
+          <a href="#programs" class="mobile-link px-4 py-3 text-sm text-white/60">
+            Programs
+          </a>
+
+          <a href="#archive" class="mobile-link px-4 py-3 text-sm text-white/60">
+            Archive
+          </a>
+
+        </div>
+
+      </div>
+
+    </div>
+  </header>
+
+
+  <main>
+
+    <!-- =========================================================
+         HERO
+    ========================================================== -->
+
+    <section
+      id="home"
+      class="relative min-h-screen overflow-hidden flex items-center"
+    >
+
+      <canvas id="particleCanvas"></canvas>
+
+      <div id="heroGlow"></div>
+
+      <div class="absolute inset-0 grid opacity-50"></div>
+
+      <!-- Top status -->
+      <div class="absolute top-28 left-5 lg:left-10 z-10">
+
+        <div class="flex items-center gap-3 font-mono text-[9px] text-white/30">
+
+          <span class="w-1.5 h-1.5 rounded-full bg-green-400 shadow-[0_0_10px_#4ade80]"></span>
+
+          SYSTEM ONLINE
+
+          <span class="text-white/10">/</span>
+
+          SAINTEK.OS
+
+        </div>
+
+      </div>
+
+
+      <div class="relative z-10 max-w-7xl mx-auto px-5 lg:px-8 w-full">
+
+        <div class="grid lg:grid-cols-[1.25fr_.75fr] gap-14 items-center">
+
+          <!-- Hero copy -->
+
+          <div>
+
+            <div
+              class="flex items-center gap-3 mb-8 opacity-0 animate-[heroWord_1s_.05s_forwards]"
+            >
+
+              <span class="w-10 h-px bg-cyan-300"></span>
+
+              <span class="font-mono text-[10px] text-cyan-300 tracking-[.3em]">
+                BEM SAINTEK / 2026
+              </span>
+
+            </div>
+
+
+            <h1
+              class="hero-title font-display font-bold uppercase"
+            >
+
+              <span class="hero-word">BEYOND</span>
+
+              <br />
+
+              <span class="hero-word gradient-text">LIMITS.</span>
+
+              <br />
+
+              <span class="hero-word text-white/20">TOGETHER.</span>
+
+            </h1>
+
+
+            <div class="mt-10 max-w-xl">
+
+              <div
+                class="hero-line h-px bg-gradient-to-r
+                       from-cyan-300/70 via-blue-500/40 to-transparent"
+              ></div>
+
+              <p
+                class="mt-6 text-white/40 text-sm md:text-base
+                       leading-relaxed opacity-0 animate-[heroWord_1s_1s_forwards]"
+              >
+                Ketika sains bertemu keberanian.
+                Ketika teknologi bertemu kemanusiaan.
+                Ketika mahasiswa memutuskan untuk tidak hanya
+                menyaksikan perubahan — tetapi membangunnya.
+              </p>
+
+            </div>
+
+
+            <div
+              class="mt-8 flex flex-wrap gap-3 opacity-0 animate-[heroWord_1s_1.15s_forwards]"
+            >
+
+              <a
+                href="#about"
+                class="magnetic group inline-flex items-center gap-3
+                       px-6 py-3.5 rounded-full bg-cyan-300
+                       text-black text-sm font-bold
+                       hover:bg-white transition"
+              >
+
+                Explore Movement
+
+                <span
+                  class="w-7 h-7 rounded-full bg-black/10
+                         flex items-center justify-center
+                         group-hover:rotate-45 transition"
+                >
+                  <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                </span>
+
+              </a>
+
+
+              <a
+                href="#departments"
+                class="magnetic inline-flex items-center gap-3
+                       px-6 py-3.5 rounded-full border border-white/10
+                       bg-white/[.025] text-white/60 text-sm
+                       hover:text-white hover:bg-white/[.06] transition"
+              >
+                Explore Departments
+              </a>
+
+            </div>
+
+          </div>
+
+
+          <!-- Terminal -->
+
+          <div
+            class="terminal rounded-[1.7rem] overflow-hidden
+                   opacity-0 animate-[heroWord_1s_1.3s_forwards]"
+          >
+
+            <div
+              class="h-11 px-5 border-b border-white/5
+                     flex items-center justify-between"
+            >
+
+              <div class="flex gap-1.5">
+
+                <span class="w-2 h-2 rounded-full bg-red-400/80"></span>
+                <span class="w-2 h-2 rounded-full bg-yellow-400/80"></span>
+                <span class="w-2 h-2 rounded-full bg-green-400/80"></span>
+
+              </div>
+
+              <span class="font-mono text-[9px] text-white/20">
+                mission_control
+              </span>
+
+            </div>
+
+
+            <div class="p-6 font-mono text-xs">
+
+              <div class="text-white/20 mb-5">
+                BEM SAINTEK TERMINAL v2.6
+              </div>
+
+              <div class="terminal-line text-cyan-300 mb-3">
+                $ initialize_movement()
+              </div>
+
+              <div class="terminal-line text-white/45 mb-3" style="animation-delay:.3s">
+                → loading students...
+              </div>
+
+              <div class="terminal-line text-white/45 mb-3" style="animation-delay:.55s">
+                → connecting departments...
+              </div>
+
+              <div class="terminal-line text-white/45 mb-3" style="animation-delay:.8s">
+                → syncing ideas...
+              </div>
+
+              <div class="terminal-line text-green-300 mb-6" style="animation-delay:1.05s">
+                ✓ movement initialized
+              </div>
+
+
+              <div class="border-t border-white/5 pt-5">
+
+                <div class="flex justify-between mb-2">
+                  <span class="text-white/25">IMPACT</span>
+                  <span class="text-cyan-300">98.7%</span>
+                </div>
+
+                <div class="h-1 bg-white/5 rounded-full overflow-hidden">
+                  <div
+                    class="h-full w-[98%] bg-gradient-to-r from-cyan-300 to-blue-500"
+                  ></div>
+                </div>
+
+
+                <div class="grid grid-cols-2 gap-3 mt-5">
+
+                  <div class="p-3 rounded-xl bg-white/[.025] border border-white/5">
+                    <div class="text-white/20 text-[9px]">
+                      DEPARTMENTS
+                    </div>
+                    <div class="text-lg mt-1">
+                      08
+                    </div>
+                  </div>
+
+                  <div class="p-3 rounded-xl bg-white/[.025] border border-white/5">
+                    <div class="text-white/20 text-[9px]">
+                      PROJECTS
+                    </div>
+                    <div class="text-lg mt-1">
+                      32
+                    </div>
+                  </div>
+
+                  <div class="p-3 rounded-xl bg-white/[.025] border border-white/5">
+                    <div class="text-white/20 text-[9px]">
+                      STUDENTS
+                    </div>
+                    <div class="text-lg mt-1">
+                      1.2K
+                    </div>
+                  </div>
+
+                  <div class="p-3 rounded-xl bg-white/[.025] border border-white/5">
+                    <div class="text-white/20 text-[9px]">
+                      STATUS
+                    </div>
+                    <div class="text-lg mt-1 text-green-300">
+                      LIVE
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <div class="mt-6 text-white/20">
+                $ <span class="text-white/40">create_impact</span><span class="blink">_</span>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="absolute bottom-7 left-1/2 -translate-x-1/2">
+
+        <div class="flex flex-col items-center gap-3">
+
+          <span class="font-mono text-[8px] tracking-[.4em] text-white/20">
+            SCROLL
+          </span>
+
+          <div class="w-px h-12 bg-gradient-to-b from-cyan-300/60 to-transparent"></div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================================================
+         MARQUEE
+    ========================================================== -->
+
+    <section class="marquee border-y border-white/5 bg-white/[.012]">
+
+      <div class="py-5">
+
+        <div class="marquee-track">
+
+          <div class="flex items-center gap-12 px-6 whitespace-nowrap">
+
+            <span class="font-display text-sm text-white/25">SCIENCE</span>
+            <span class="text-cyan-300">✦</span>
+
+            <span class="font-display text-sm text-white/25">TECHNOLOGY</span>
+            <span class="text-cyan-300">✦</span>
+
+            <span class="font-display text-sm text-white/25">COLLABORATION</span>
+            <span class="text-cyan-300">✦</span>
+
+            <span class="font-display text-sm text-white/25">INNOVATION</span>
+            <span class="text-cyan-300">✦</span>
+
+            <span class="font-display text-sm text-white/25">IMPACT</span>
+            <span class="text-cyan-300">✦</span>
+
+            <span class="font-display text-sm text-white/25">FUTURE</span>
+            <span class="text-cyan-300">✦</span>
+
+          </div>
+
+
+          <div class="flex items-center gap-12 px-6 whitespace-nowrap">
+
+            <span class="font-display text-sm text-white/25">SCIENCE</span>
+            <span class="text-cyan-300">✦</span>
+
+            <span class="font-display text-sm text-white/25">TECHNOLOGY</span>
+            <span class="text-cyan-300">✦</span>
+
+            <span class="font-display text-sm text-white/25">COLLABORATION</span>
+            <span class="text-cyan-300">✦</span>
+
+            <span class="font-display text-sm text-white/25">INNOVATION</span>
+            <span class="text-cyan-300">✦</span>
+
+            <span class="font-display text-sm text-white/25">IMPACT</span>
+            <span class="text-cyan-300">✦</span>
+
+            <span class="font-display text-sm text-white/25">FUTURE</span>
+            <span class="text-cyan-300">✦</span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================================================
+         ABOUT
+    ========================================================== -->
+
+    <section id="about" class="relative py-36">
+
+      <div class="absolute inset-0 grid opacity-25"></div>
+
+      <div class="relative max-w-7xl mx-auto px-5 lg:px-8">
+
+        <div class="grid lg:grid-cols-[.8fr_1.2fr] gap-16 items-center">
+
+          <div class="reveal-left">
+
+            <div class="relative max-w-md">
+
+              <div
+                class="absolute -inset-3 border border-cyan-300/10
+                       rounded-[2rem] rotate-3"
+              ></div>
+
+              <div
+                class="absolute -inset-3 border border-violet-300/10
+                       rounded-[2rem] -rotate-3"
+              ></div>
+
+              <div
+                class="image-card relative aspect-[4/5]
+                       rounded-[2rem] overflow-hidden
+                       border border-white/10 bg-white/5"
+              >
+
+                <img
+                  src="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1000&q=85"
+                  alt="Mahasiswa berkolaborasi"
+                  class="w-full h-full object-cover grayscale"
+                />
+
+                <div
+                  class="absolute inset-0 bg-gradient-to-t
+                         from-[#03050a] via-transparent to-transparent"
+                ></div>
+
+                <div class="absolute bottom-6 left-6">
+
+                  <div class="font-mono text-[9px] text-cyan-300 tracking-[.3em]">
+                    FILE_001
+                  </div>
+
+                  <div class="font-display text-2xl font-bold mt-1">
+                    THE MOVEMENT
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="reveal-right">
+
+            <div class="flex items-center gap-3 mb-7">
+
+              <span class="w-9 h-px bg-cyan-300"></span>
+
+              <span class="font-mono text-[10px] text-cyan-300 tracking-[.3em]">
+                01 / THE IDEA
+              </span>
+
+            </div>
+
+
+            <h2
+              class="font-display text-5xl md:text-7xl
+                     font-bold tracking-[-.06em] leading-[.9]"
+            >
+              WE ARE NOT
+              <br />
+              <span class="text-white/20">HERE TO FIT IN.</span>
+            </h2>
+
+
+            <div class="mt-8 space-y-5 text-white/40 leading-relaxed max-w-2xl">
+
+              <p>
+                BEM SAINTEK adalah ruang bertemunya gagasan,
+                keresahan, pengetahuan, dan keberanian.
+              </p>
+
+              <p>
+                Kami percaya mahasiswa bukan hanya penerima ilmu.
+                Mahasiswa adalah bagian dari ekosistem yang mampu
+                menciptakan solusi.
+              </p>
+
+              <p class="text-white/60">
+                Karena itu kami memilih untuk bergerak.
+                Tidak sempurna. Tidak selalu mudah.
+                Tetapi selalu bersama.
+              </p>
+
+            </div>
+
+
+            <div class="grid grid-cols-3 gap-4 mt-10">
+
+              <div>
+                <div class="font-display text-3xl font-bold">
+                  08
+                </div>
+                <div class="text-[10px] text-white/25 mt-1">
+                  DEPARTMENTS
+                </div>
+              </div>
+
+              <div>
+                <div class="font-display text-3xl font-bold">
+                  32
+                </div>
+                <div class="text-[10px] text-white/25 mt-1">
+                  PROJECTS
+                </div>
+              </div>
+
+              <div>
+                <div class="font-display text-3xl font-bold">
+                  1.2K
+                </div>
+                <div class="text-[10px] text-white/25 mt-1">
+                  STUDENTS
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================================================
+         DNA VALUES
+    ========================================================== -->
+
+    <section id="values" class="relative py-36 bg-white/[.015] border-y border-white/5 overflow-hidden">
+
+      <div class="max-w-7xl mx-auto px-5 lg:px-8">
+
+        <div class="text-center reveal">
+
+          <div class="flex items-center justify-center gap-3 mb-6">
+
+            <span class="w-8 h-px bg-violet-300"></span>
+
+            <span class="font-mono text-[10px] text-violet-300 tracking-[.3em]">
+              02 / OUR DNA
+            </span>
+
+            <span class="w-8 h-px bg-violet-300"></span>
+
+          </div>
+
+
+          <h2 class="font-display text-5xl md:text-7xl font-bold tracking-[-.06em]">
+            WHAT
+            <span class="text-white/20">DRIVES US.</span>
+          </h2>
+
+          <p class="max-w-xl mx-auto text-white/35 mt-6">
+            Enam prinsip yang menjadi DNA dari setiap keputusan,
+            kolaborasi, dan gerakan.
+          </p>
+
+        </div>
+
+
+        <div class="relative h-[620px] max-w-4xl mx-auto mt-20">
+
+          <!-- SVG DNA -->
+          <svg
+            class="absolute inset-0 w-full h-full"
+            viewBox="0 0 800 620"
+            preserveAspectRatio="none"
+          >
+
+            <path
+              d="M250 0 C650 80 150 150 550 230 C650 280 150 350 250 430 C650 500 150 570 550 620"
+              fill="none"
+              stroke="rgba(34,211,238,.2)"
+              stroke-width="2"
+            />
+
+            <path
+              d="M550 0 C150 80 650 150 250 230 C150 280 650 350 550 430 C150 500 650 570 250 620"
+              fill="none"
+              stroke="rgba(139,92,246,.2)"
+              stroke-width="2"
+            />
+
+            <line x1="270" y1="48" x2="530" y2="48" stroke="rgba(255,255,255,.08)" />
+            <line x1="235" y1="125" x2="565" y2="125" stroke="rgba(255,255,255,.08)" />
+            <line x1="210" y1="205" x2="590" y2="205" stroke="rgba(255,255,255,.08)" />
+            <line x1="210" y1="285" x2="590" y2="285" stroke="rgba(255,255,255,.08)" />
+            <line x1="235" y1="365" x2="565" y2="365" stroke="rgba(255,255,255,.08)" />
+            <line x1="270" y1="445" x2="530" y2="445" stroke="rgba(255,255,255,.08)" />
+            <line x1="300" y1="525" x2="500" y2="525" stroke="rgba(255,255,255,.08)" />
+
+          </svg>
+
+
+          <!-- Nodes -->
+
+          <div
+            class="dna-node left-[31%] top-[6%]"
+            data-value="INTEGRITY"
+          ></div>
+
+          <div
+            class="dna-node right-[31%] top-[18%]"
+            data-value="INNOVATION"
+          ></div>
+
+          <div
+            class="dna-node left-[26%] top-[31%]"
+            data-value="COLLABORATION"
+          ></div>
+
+          <div
+            class="dna-node right-[26%] top-[44%]"
+            data-value="COURAGE"
+          ></div>
+
+          <div
+            class="dna-node left-[29%] top-[57%]"
+            data-value="EMPATHY"
+          ></div>
+
+          <div
+            class="dna-node right-[29%] top-[70%]"
+            data-value="IMPACT"
+          ></div>
+
+
+          <!-- Center -->
+
+          <div
+            class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
+                   w-40 h-40 rounded-full
+                   border border-cyan-300/30
+                   bg-cyan-300/[.03]
+                   flex flex-col items-center justify-center
+                   text-center
+                   shadow-[0_0_100px_rgba(34,211,238,.06)]"
+          >
+
+            <div class="font-mono text-[8px] tracking-[.3em] text-cyan-300">
+              SAINTEK
+            </div>
+
+            <div class="font-display text-xl font-bold mt-2">
+              DNA
+            </div>
+
+            <div class="text-[9px] text-white/25 mt-2">
+              THE CORE
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div
+          id="dnaLabel"
+          class="text-center font-mono text-xs text-cyan-300
+                 tracking-[.3em] min-h-[20px]"
+        >
+          HOVER A NODE
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================================================
+         DEPARTMENTS CONSTELLATION
+    ========================================================== -->
+
+    <section id="departments" class="relative py-36">
+
+      <div class="max-w-7xl mx-auto px-5 lg:px-8">
+
+        <div class="grid lg:grid-cols-[.65fr_1.35fr] gap-14 items-center">
+
+          <div class="reveal-left">
+
+            <div class="flex items-center gap-3 mb-7">
+
+              <span class="w-9 h-px bg-cyan-300"></span>
+
+              <span class="font-mono text-[10px] text-cyan-300 tracking-[.3em]">
+                03 / THE ECOSYSTEM
+              </span>
+
+            </div>
+
+
+            <h2
+              class="font-display text-5xl md:text-7xl
+                     font-bold tracking-[-.06em] leading-[.9]"
+            >
+              ONE
+              <br />
+              <span class="text-white/20">MISSION.</span>
+              <br />
+              <span class="gradient-text">8 NODES.</span>
+            </h2>
+
+
+            <p class="text-white/35 leading-relaxed mt-8 max-w-md">
+              Delapan departemen. Delapan fungsi.
+              Satu ekosistem yang saling terhubung.
+              Klik setiap node untuk melihat perannya.
+            </p>
+
+
+            <div
+              id="departmentInfo"
+              class="mt-10 p-6 rounded-2xl glass min-h-[170px]"
+            >
+
+              <div class="font-mono text-[9px] text-cyan-300 tracking-[.25em]">
+                SELECT NODE
+              </div>
+
+              <h3
+                id="departmentInfoTitle"
+                class="font-display text-2xl font-bold mt-3"
+              >
+                Ekosistem SAINTEK
+              </h3>
+
+              <p
+                id="departmentInfoText"
+                class="text-sm text-white/35 mt-3 leading-relaxed"
+              >
+                Pilih salah satu departemen di constellation.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="reveal-right">
+
+            <div class="constellation">
+
+              <!-- lines -->
+              <div
+                class="constellation-line w-[35%] left-[50%] top-[50%]"
+                style="transform:rotate(-90deg)"
+              ></div>
+
+              <div
+                class="constellation-line w-[40%] left-[50%] top-[50%]"
+                style="transform:rotate(210deg)"
+              ></div>
+
+              <div
+                class="constellation-line w-[40%] left-[50%] top-[50%]"
+                style="transform:rotate(-30deg)"
+              ></div>
+
+              <div
+                class="constellation-line w-[42%] left-[50%] top-[50%]"
+                style="transform:rotate(155deg)"
+              ></div>
+
+              <div
+                class="constellation-line w-[42%] left-[50%] top-[50%]"
+                style="transform:rotate(25deg)"
+              ></div>
+
+              <div
+                class="constellation-line w-[34%] left-[50%] top-[50%]"
+                style="transform:rotate(90deg)"
+              ></div>
+
+
+              <!-- center -->
+              <button
+                class="constellation-node node-center"
+                data-dept="BEM"
+                data-desc="Pusat koordinasi. Menghubungkan seluruh departemen dan memastikan seluruh gerakan berjalan menuju arah yang sama."
+              >
+                <span>
+                  BEM<br />
+                  SAINTEK
+                </span>
+              </button>
+
+
+              <button
+                class="constellation-node node-1 border border-cyan-300/30 bg-white/[.02]"
+                data-dept="Ristek"
+                data-desc="Mendorong riset, teknologi, digitalisasi, dan inovasi mahasiswa menjadi solusi yang relevan."
+              >
+                RISTEK
+              </button>
+
+
+              <button
+                class="constellation-node node-2 border border-violet-300/30 bg-white/[.02]"
+                data-dept="PSDM"
+                data-desc="Membangun kapasitas mahasiswa melalui leadership, mentoring, pelatihan, dan pengembangan potensi."
+              >
+                PSDM
+              </button>
+
+
+              <button
+                class="constellation-node node-3 border border-blue-300/30 bg-white/[.02]"
+                data-dept="KOMINFO"
+                data-desc="Mengelola komunikasi, informasi, publikasi, branding, dan media digital organisasi."
+              >
+                KOMINFO
+              </button>
+
+
+              <button
+                class="constellation-node node-4 border border-pink-300/30 bg-white/[.02]"
+                data-dept="SOSMAS"
+                data-desc="Menghubungkan ilmu mahasiswa dengan kebutuhan masyarakat melalui pengabdian dan aksi sosial."
+              >
+                SOSMAS
+              </button>
+
+
+              <button
+                class="constellation-node node-5 border border-yellow-300/30 bg-white/[.02]"
+                data-dept="EKRAF"
+                data-desc="Membuka ruang kreativitas, kewirausahaan, dan pengembangan potensi ekonomi mahasiswa."
+              >
+                EKRAF
+              </button>
+
+
+              <button
+                class="constellation-node node-6 border border-green-300/30 bg-white/[.02]"
+                data-dept="ADVOKASI"
+                data-desc="Mengawal aspirasi, hak, dan kesejahteraan mahasiswa secara responsif dan berbasis data."
+              >
+                ADVOKASI
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================================================
+         MISSION CONTROL
+    ========================================================== -->
+
+    <section id="mission" class="relative py-36 bg-white/[.015] border-y border-white/5">
+
+      <div class="max-w-7xl mx-auto px-5 lg:px-8">
+
+        <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 reveal">
+
+          <div>
+
+            <div class="flex items-center gap-3 mb-7">
+
+              <span class="w-9 h-px bg-green-300"></span>
+
+              <span class="font-mono text-[10px] text-green-300 tracking-[.3em]">
+                04 / MISSION CONTROL
+              </span>
+
+            </div>
+
+            <h2 class="font-display text-5xl md:text-7xl font-bold tracking-[-.06em]">
+              MEASURE
+              <span class="text-white/20">THE IMPACT.</span>
+            </h2>
+
+          </div>
+
+
+          <div class="font-mono text-[9px] text-white/20">
+            LAST SYNC // 27.09.2026
+          </div>
+
+        </div>
+
+
+        <div class="grid lg:grid-cols-12 gap-4 mt-16">
+
+          <!-- Impact -->
+
+          <div
+            class="lg:col-span-7 rounded-[2rem] glass p-8 md:p-10 reveal"
+          >
+
+            <div class="flex justify-between items-start">
+
+              <div>
+
+                <div class="font-mono text-[9px] text-white/25 tracking-[.25em]">
+                  TOTAL IMPACT
+                </div>
+
+                <div class="font-display text-7xl md:text-8xl font-bold mt-3">
+                  <span id="impactCounter">0</span>
+                  <span class="text-cyan-300">%</span>
+                </div>
+
+              </div>
+
+              <div
+                class="w-12 h-12 rounded-xl bg-green-400/10
+                       flex items-center justify-center"
+              >
+                <i data-lucide="activity" class="w-5 h-5 text-green-300"></i>
+              </div>
+
+            </div>
+
+
+            <div class="mt-10">
+
+              <div class="flex justify-between text-xs mb-3">
+
+                <span class="text-white/30">
+                  ORGANIZATIONAL PERFORMANCE
+                </span>
+
+                <span class="text-cyan-300">
+                  98.7
+                </span>
+
+              </div>
+
+              <div class="progress-bar">
+                <span data-width="98.7"></span>
+              </div>
+
+            </div>
+
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-8">
+
+              <div class="p-5 rounded-2xl bg-white/[.025] border border-white/5">
+
+                <div class="text-2xl font-display font-bold">
+                  32
+                </div>
+
+                <div class="text-[9px] text-white/25 mt-2">
+                  PROJECTS
+                </div>
+
+              </div>
+
+
+              <div class="p-5 rounded-2xl bg-white/[.025] border border-white/5">
+
+                <div class="text-2xl font-display font-bold">
+                  24
+                </div>
+
+                <div class="text-[9px] text-white/25 mt-2">
+                  PARTNERS
+                </div>
+
+              </div>
+
+
+              <div class="p-5 rounded-2xl bg-white/[.025] border border-white/5">
+
+                <div class="text-2xl font-display font-bold">
+                  1.2K
+                </div>
+
+                <div class="text-[9px] text-white/25 mt-2">
+                  STUDENTS
+                </div>
+
+              </div>
+
+
+              <div class="p-5 rounded-2xl bg-white/[.025] border border-white/5">
+
+                <div class="text-2xl font-display font-bold">
+                  08
+                </div>
+
+                <div class="text-[9px] text-white/25 mt-2">
+                  NODES
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- System -->
+
+          <div
+            class="lg:col-span-5 rounded-[2rem] glass p-8 reveal"
+          >
+
+            <div class="flex items-center justify-between">
+
+              <div class="font-mono text-[9px] text-white/25">
+                SYSTEM STATUS
+              </div>
+
+              <span class="flex items-center gap-2 text-[9px] text-green-300">
+                <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                OPERATIONAL
+              </span>
+
+            </div>
+
+
+            <div class="mt-10 space-y-6">
+
+              <div>
+
+                <div class="flex justify-between text-xs mb-3">
+
+                  <span class="text-white/35">
+                    COLLABORATION
+                  </span>
+
+                  <span class="text-white/50">
+                    92%
+                  </span>
+
+                </div>
+
+                <div class="progress-bar">
+                  <span data-width="92"></span>
+                </div>
+
+              </div>
+
+
+              <div>
+
+                <div class="flex justify-between text-xs mb-3">
+
+                  <span class="text-white/35">
+                    INNOVATION
+                  </span>
+
+                  <span class="text-white/50">
+                    87%
+                  </span>
+
+                </div>
+
+                <div class="progress-bar">
+                  <span data-width="87"></span>
+                </div>
+
+              </div>
+
+
+              <div>
+
+                <div class="flex justify-between text-xs mb-3">
+
+                  <span class="text-white/35">
+                    PARTICIPATION
+                  </span>
+
+                  <span class="text-white/50">
+                    95%
+                  </span>
+
+                </div>
+
+                <div class="progress-bar">
+                  <span data-width="95"></span>
+                </div>
+
+              </div>
+
+
+              <div>
+
+                <div class="flex justify-between text-xs mb-3">
+
+                  <span class="text-white/35">
+                    SOCIAL IMPACT
+                  </span>
+
+                  <span class="text-white/50">
+                    89%
+                  </span>
+
+                </div>
+
+                <div class="progress-bar">
+                  <span data-width="89"></span>
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <div
+              class="mt-10 p-5 rounded-2xl
+                     bg-cyan-300/[.03]
+                     border border-cyan-300/10"
+            >
+
+              <div class="flex gap-3">
+
+                <i data-lucide="radio" class="w-4 h-4 text-cyan-300 mt-0.5"></i>
+
+                <div>
+
+                  <div class="text-xs text-cyan-300">
+                    LIVE MESSAGE
+                  </div>
+
+                  <p class="text-xs text-white/35 leading-relaxed mt-2">
+                    Semua sistem bergerak.
+                    Ide baru sedang diproses.
+                  </p>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================================================
+         HUMAN BEHIND MOVEMENT
+    ========================================================== -->
+
+    <section class="relative py-36">
+
+      <div class="max-w-7xl mx-auto px-5 lg:px-8">
+
+        <div class="grid lg:grid-cols-[1fr_.9fr] gap-16 items-center">
+
+          <div class="reveal-left">
+
+            <div class="flex items-center gap-3 mb-7">
+
+              <span class="w-9 h-px bg-pink-300"></span>
+
+              <span class="font-mono text-[10px] text-pink-300 tracking-[.3em]">
+                05 / THE PEOPLE
+              </span>
+
+            </div>
+
+
+            <h2
+              class="font-display text-5xl md:text-7xl
+                     font-bold tracking-[-.06em] leading-[.9]"
+            >
+              BEHIND
+              <br />
+              THE
+              <br />
+              <span class="text-white/20">MOVEMENT.</span>
+            </h2>
+
+
+            <p class="text-white/35 leading-relaxed mt-8 max-w-lg">
+              Di balik setiap program ada manusia.
+              Di balik setiap angka ada cerita.
+              Dan di balik setiap perubahan ada mereka yang
+              memilih untuk peduli.
+            </p>
+
+
+            <a
+              href="#join"
+              class="magnetic inline-flex items-center gap-3 mt-8
+                     text-sm text-white/60 hover:text-white transition"
+            >
+
+              Meet the people
+
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+
+            </a>
+
+          </div>
+
+
+          <div class="grid grid-cols-2 gap-3 reveal-right">
+
+            <div class="image-card rounded-3xl aspect-[.8] border border-white/10">
+
+              <img
+                src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=700&q=85"
+                alt="Team"
+                class="w-full h-full object-cover grayscale"
+              />
+
+            </div>
+
+
+            <div class="image-card rounded-3xl aspect-[.8] border border-white/10 mt-12">
+
+              <img
+                src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=700&q=85"
+                alt="Team"
+                class="w-full h-full object-cover grayscale"
+              />
+
+            </div>
+
+
+            <div class="image-card rounded-3xl aspect-[.8] border border-white/10 -mt-12">
+
+              <img
+                src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=700&q=85"
+                alt="Team"
+                class="w-full h-full object-cover grayscale"
+              />
+
+            </div>
+
+
+            <div class="image-card rounded-3xl aspect-[.8] border border-white/10">
+
+              <img
+                src="https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=700&q=85"
+                alt="Team"
+                class="w-full h-full object-cover grayscale"
+              />
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================================================
+         PROGRAMS
+    ========================================================== -->
+
+    <section id="programs" class="relative py-36 bg-white/[.015] border-y border-white/5">
+
+      <div class="max-w-7xl mx-auto px-5 lg:px-8">
+
+        <div class="text-center reveal">
+
+          <div class="font-mono text-[10px] text-cyan-300 tracking-[.3em]">
+            06 / SELECTED PROJECTS
+          </div>
+
+          <h2
+            class="font-display text-5xl md:text-7xl
+                   font-bold tracking-[-.06em] mt-5"
+          >
+            IDEAS
+            <span class="text-white/20">IN MOTION.</span>
+          </h2>
+
+        </div>
+
+
+        <div class="grid lg:grid-cols-2 gap-4 mt-16">
+
+          <!-- Program 1 -->
+
+          <article
+            class="group relative min-h-[520px] rounded-[2rem]
+                   overflow-hidden border border-white/10
+                   reveal"
+          >
+
+            <img
+              src="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1400&q=85"
+              class="absolute inset-0 w-full h-full object-cover
+                     grayscale group-hover:grayscale-0
+                     group-hover:scale-105 transition duration-1000"
+              alt="Innovation"
+            />
+
+            <div
+              class="absolute inset-0
+                     bg-gradient-to-t from-[#03050a]
+                     via-[#03050a]/50 to-transparent"
+            ></div>
+
+
+            <div class="relative h-full p-8 md:p-10 flex flex-col justify-end">
+
+              <div class="font-mono text-[9px] text-cyan-300 tracking-[.3em]">
+                PROJECT_001
+              </div>
+
+              <h3 class="font-display text-4xl md:text-5xl font-bold mt-3">
+                SAINTEK
+                <br />
+                <span class="text-white/45">INNOVATION</span>
+              </h3>
+
+              <p class="text-sm text-white/40 max-w-lg mt-5 leading-relaxed">
+                Ruang eksperimen bagi mahasiswa untuk membangun
+                solusi berbasis teknologi terhadap persoalan nyata.
+              </p>
+
+              <div class="mt-7 flex items-center gap-3 text-xs">
+
+                <span class="px-3 py-1.5 rounded-full bg-white/10">
+                  Research
+                </span>
+
+                <span class="px-3 py-1.5 rounded-full bg-white/10">
+                  Technology
+                </span>
+
+                <span class="px-3 py-1.5 rounded-full bg-white/10">
+                  Impact
+                </span>
+
+              </div>
+
+            </div>
+
+          </article>
+
+
+          <!-- Program 2 -->
+
+          <article
+            class="group relative min-h-[520px] rounded-[2rem]
+                   overflow-hidden border border-white/10
+                   reveal"
+          >
+
+            <img
+              src="https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?auto=format&fit=crop&w=1400&q=85"
+              class="absolute inset-0 w-full h-full object-cover
+                     grayscale group-hover:grayscale-0
+                     group-hover:scale-105 transition duration-1000"
+              alt="Social Impact"
+            />
+
+            <div
+              class="absolute inset-0
+                     bg-gradient-to-t from-[#03050a]
+                     via-[#03050a]/50 to-transparent"
+            ></div>
+
+
+            <div class="relative h-full p-8 md:p-10 flex flex-col justify-end">
+
+              <div class="font-mono text-[9px] text-green-300 tracking-[.3em]">
+                PROJECT_002
+              </div>
+
+              <h3 class="font-display text-4xl md:text-5xl font-bold mt-3">
+                SAINTEK
+                <br />
+                <span class="text-white/45">BERDAMPAK</span>
+              </h3>
+
+              <p class="text-sm text-white/40 max-w-lg mt-5 leading-relaxed">
+                Membawa ilmu keluar dari ruang kelas dan
+                mengubahnya menjadi kontribusi nyata bagi masyarakat.
+              </p>
+
+              <div class="mt-7 flex items-center gap-3 text-xs">
+
+                <span class="px-3 py-1.5 rounded-full bg-white/10">
+                  Community
+                </span>
+
+                <span class="px-3 py-1.5 rounded-full bg-white/10">
+                  Education
+                </span>
+
+                <span class="px-3 py-1.5 rounded-full bg-white/10">
+                  Impact
+                </span>
+
+              </div>
+
+            </div>
+
+          </article>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================================================
+         COMMAND TERMINAL
+    ========================================================== -->
+
+    <section class="relative py-36">
+
+      <div class="max-w-5xl mx-auto px-5 lg:px-8">
+
+        <div class="text-center reveal">
+
+          <div class="font-mono text-[10px] text-violet-300 tracking-[.3em]">
+            07 / INTERFACE
+          </div>
+
+          <h2
+            class="font-display text-5xl md:text-7xl
+                   font-bold tracking-[-.06em] mt-5"
+          >
+            TALK TO
+            <span class="text-white/20">SAINTEK.</span>
+          </h2>
+
+          <p class="text-white/30 mt-6">
+            Ketik command untuk menjelajahi sistem.
+          </p>
+
+        </div>
+
+
+        <div
+          class="terminal rounded-[2rem] overflow-hidden mt-14 reveal"
+        >
+
+          <div
+            class="h-12 px-5 border-b border-white/5
+                   flex items-center justify-between"
+          >
+
+            <div class="flex gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-red-400"></span>
+              <span class="w-2 h-2 rounded-full bg-yellow-400"></span>
+              <span class="w-2 h-2 rounded-full bg-green-400"></span>
+            </div>
+
+            <span class="font-mono text-[9px] text-white/20">
+              visitor@bem-saintek:~
+            </span>
+
+          </div>
+
+
+          <div
+            id="terminalOutput"
+            class="h-[270px] overflow-y-auto p-6
+                   font-mono text-xs text-white/50 space-y-2"
+          >
+
+            <div class="text-cyan-300">
+              BEM SAINTEK OS v2.6
+            </div>
+
+            <div>
+              Type <span class="text-white">help</span> to see available commands.
+            </div>
+
+            <div class="text-white/20">
+              ─────────────────────────────────────
+            </div>
+
+          </div>
+
+
+          <div class="border-t border-white/5 p-5 flex items-center gap-3">
+
+            <span class="font-mono text-cyan-300 text-xs">
+              visitor@bem:~$
+            </span>
+
+            <input
+              id="terminalInput"
+              autocomplete="off"
+              spellcheck="false"
+              class="flex-1 bg-transparent outline-none
+                     font-mono text-xs text-white"
+              placeholder="type a command..."
+            />
+
+          </div>
+
+        </div>
+
+
+        <div class="flex flex-wrap justify-center gap-2 mt-5">
+
+          <button
+            class="command-chip px-3 py-1.5 rounded-full
+                   border border-white/10 text-[10px]
+                   text-white/35 hover:text-cyan-300 transition"
+            data-command="help"
+          >
+            help
+          </button>
+
+          <button
+            class="command-chip px-3 py-1.5 rounded-full
+                   border border-white/10 text-[10px]
+                   text-white/35 hover:text-cyan-300 transition"
+            data-command="departments"
+          >
+            departments
+          </button>
+
+          <button
+            class="command-chip px-3 py-1.5 rounded-full
+                   border border-white/10 text-[10px]
+                   text-white/35 hover:text-cyan-300 transition"
+            data-command="vision"
+          >
+            vision
+          </button>
+
+          <button
+            class="command-chip px-3 py-1.5 rounded-full
+                   border border-white/10 text-[10px]
+                   text-white/35 hover:text-cyan-300 transition"
+            data-command="impact"
+          >
+            impact
+          </button>
+
+          <button
+            class="command-chip px-3 py-1.5 rounded-full
+                   border border-white/10 text-[10px]
+                   text-white/35 hover:text-cyan-300 transition"
+            data-command="clear"
+          >
+            clear
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================================================
+         ARCHIVE
+    ========================================================== -->
+
+    <section id="archive" class="relative py-36 bg-white/[.015] border-y border-white/5">
+
+      <div class="max-w-7xl mx-auto px-5 lg:px-8">
+
+        <div class="grid lg:grid-cols-[.65fr_1.35fr] gap-14">
+
+          <div class="reveal-left">
+
+            <div class="font-mono text-[10px] text-cyan-300 tracking-[.3em]">
+              08 / FUTURE ARCHIVE
+            </div>
+
+            <h2
+              class="font-display text-5xl md:text-7xl
+                     font-bold tracking-[-.06em] mt-5 leading-[.9]"
+            >
+              MEMORY
+              <br />
+              <span class="text-white/20">BECOMES</span>
+              <br />
+              HISTORY.
+            </h2>
+
+            <p class="text-white/30 leading-relaxed mt-8 max-w-md">
+              Setiap program meninggalkan jejak.
+              Setiap jejak menjadi bagian dari perjalanan.
+            </p>
+
+          </div>
+
+
+          <div class="reveal-right">
+
+            <div class="border-t border-white/10">
+
+              <div class="archive-item border-b border-white/10 py-7">
+
+                <div class="grid md:grid-cols-[100px_1fr_auto] gap-5 items-center">
+
+                  <div class="font-mono text-xs text-cyan-300">
+                    001
+                  </div>
+
+                  <div>
+
+                    <h3 class="font-display text-xl font-bold">
+                      Innovation Day
+                    </h3>
+
+                    <p class="text-xs text-white/25 mt-2">
+                      Research • Technology • Exhibition
+                    </p>
+
+                  </div>
+
+                  <div class="text-xs text-white/20 font-mono">
+                    MAR 2026
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <div class="archive-item border-b border-white/10 py-7">
+
+                <div class="grid md:grid-cols-[100px_1fr_auto] gap-5 items-center">
+
+                  <div class="font-mono text-xs text-violet-300">
+                    002
+                  </div>
+
+                  <div>
+
+                    <h3 class="font-display text-xl font-bold">
+                      Leadership Camp
+                    </h3>
+
+                    <p class="text-xs text-white/25 mt-2">
+                      Leadership • Growth • Collaboration
+                    </p>
+
+                  </div>
+
+                  <div class="text-xs text-white/20 font-mono">
+                    APR 2026
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <div class="archive-item border-b border-white/10 py-7">
+
+                <div class="grid md:grid-cols-[100px_1fr_auto] gap-5 items-center">
+
+                  <div class="font-mono text-xs text-green-300">
+                    003
+                  </div>
+
+                  <div>
+
+                    <h3 class="font-display text-xl font-bold">
+                      SAINTEK Berdampak
+                    </h3>
+
+                    <p class="text-xs text-white/25 mt-2">
+                      Community • Education • Social Impact
+                    </p>
+
+                  </div>
+
+                  <div class="text-xs text-white/20 font-mono">
+                    JUN 2026
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <div class="archive-item border-b border-white/10 py-7">
+
+                <div class="grid md:grid-cols-[100px_1fr_auto] gap-5 items-center">
+
+                  <div class="font-mono text-xs text-pink-300">
+                    004
+                  </div>
+
+                  <div>
+
+                    <h3 class="font-display text-xl font-bold">
+                      Tech Future Forum
+                    </h3>
+
+                    <p class="text-xs text-white/25 mt-2">
+                      AI • Digital • Future
+                    </p>
+
+                  </div>
+
+                  <div class="text-xs text-white/20 font-mono">
+                    AUG 2026
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <div class="archive-item border-b border-white/10 py-7">
+
+                <div class="grid md:grid-cols-[100px_1fr_auto] gap-5 items-center">
+
+                  <div class="font-mono text-xs text-yellow-300">
+                    005
+                  </div>
+
+                  <div>
+
+                    <h3 class="font-display text-xl font-bold">
+                      SAINTEK Expo
+                    </h3>
+
+                    <p class="text-xs text-white/25 mt-2">
+                      Showcase • Community • Celebration
+                    </p>
+
+                  </div>
+
+                  <div class="text-xs text-white/20 font-mono">
+                    OCT 2026
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================================================
+         JOIN / CINEMATIC CTA
+    ========================================================== -->
+
+    <section
+      id="join"
+      class="relative min-h-[90vh] flex items-center
+             overflow-hidden"
+    >
+
+      <div class="absolute inset-0 grid opacity-30"></div>
+
+
+      <div
+        class="absolute left-1/2 top-1/2
+               -translate-x-1/2 -translate-y-1/2
+               w-[700px] h-[700px]
+               rounded-full
+               border border-cyan-300/[.04]"
+      ></div>
+
+
+      <div
+        class="absolute left-1/2 top-1/2
+               -translate-x-1/2 -translate-y-1/2
+               w-[500px] h-[500px]
+               rounded-full
+               border border-violet-300/[.05]"
+      ></div>
+
+
+      <div class="relative z-10 max-w-6xl mx-auto px-5 text-center reveal">
+
+        <div
+          class="font-mono text-[10px] text-cyan-300
+                 tracking-[.4em]"
+        >
+          09 / THE NEXT CHAPTER
+        </div>
+
+
+        <h2
+          class="font-display font-bold
+                 text-[clamp(4rem,11vw,10rem)]
+                 leading-[.8] tracking-[-.08em]
+                 mt-8"
+        >
+
+          <span class="text-white/20">
+            DON'T WAIT
+          </span>
+
+          <br />
+
+          <span class="gradient-text">
+            BUILD IT.
+          </span>
+
+        </h2>
+
+
+        <p class="max-w-xl mx-auto text-white/35 mt-10 leading-relaxed">
+
+          Masa depan tidak datang sendiri.
+          Ia dibangun oleh orang-orang yang bersedia
+          memulai sesuatu hari ini.
+
+        </p>
+
+
+        <div class="flex justify-center gap-3 mt-10">
+
+          <a
+            href="mailto:bem@saintek.ac.id"
+            class="magnetic inline-flex items-center gap-3
+                   px-7 py-4 rounded-full bg-white text-black
+                   text-sm font-bold hover:bg-cyan-300 transition"
+          >
+
+            Start a Conversation
+
+            <i data-lucide="arrow-up-right" class="w-5 h-5"></i>
+
+          </a>
+
+        </div>
+
+
+        <div class="mt-20 font-mono text-[9px] text-white/15">
+          BEM SAINTEK // BEYOND LIMITS // 2026
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- =========================================================
+       FOOTER
+  ========================================================== -->
+
+  <footer class="border-t border-white/5 pt-20">
+
+    <div class="max-w-7xl mx-auto px-5 lg:px-8">
+
+      <div
+        class="footer-big font-display font-bold
+               text-white/[.035] select-none"
+      >
+        SAINTEK
+      </div>
+
+
+      <div
+        class="border-t border-white/5
+               py-8 mt-8
+               flex flex-col md:flex-row
+               justify-between gap-5"
+      >
+
+        <div class="flex items-center gap-3">
+
+          <div
+            class="w-9 h-9 rounded-xl
+                   bg-cyan-300 text-black
+                   flex items-center justify-center
+                   font-display font-bold"
+          >
+            S
+          </div>
+
+          <div>
+
+            <div class="font-display font-bold text-sm">
+              BEM SAINTEK
+            </div>
+
+            <div class="font-mono text-[8px] text-white/20 tracking-[.2em]">
+              BEYOND LIMITS
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="flex items-center gap-5 text-xs text-white/25">
+
+          <a href="#" class="hover:text-cyan-300 transition">
+            Instagram
+          </a>
+
+          <a href="#" class="hover:text-cyan-300 transition">
+            LinkedIn
+          </a>
+
+          <a href="#" class="hover:text-cyan-300 transition">
+            YouTube
+          </a>
+
+        </div>
+
+
+        <div class="font-mono text-[9px] text-white/15">
+          © 2026 BEM SAINTEK
+        </div>
+
+      </div>
+
+    </div>
+
+  </footer>
+
+
+  <!-- =========================================================
+       DEPARTMENT MODAL
+  ========================================================== -->
+
+  <div
+    id="deptModal"
+    class="fixed inset-0 z-[500]
+           flex items-center justify-center
+           p-5 bg-black/75 backdrop-blur-xl"
+  >
+
+    <div
+      class="modal-card w-full max-w-lg
+             rounded-[2rem]
+             border border-white/10
+             bg-[#070a11]
+             p-8 md:p-10"
+    >
+
+      <div class="flex justify-between items-start">
+
+        <div
+          class="w-14 h-14 rounded-2xl
+                 bg-cyan-300/10
+                 flex items-center justify-center"
+        >
+          <i data-lucide="orbit" class="w-6 h-6 text-cyan-300"></i>
+        </div>
+
+
+        <button
+          id="closeModal"
+          class="w-10 h-10 rounded-xl
+                 border border-white/10
+                 flex items-center justify-center
+                 text-white/30 hover:text-white transition"
+        >
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+
+      </div>
+
+
+      <div class="mt-9">
+
+        <div
+          id="modalNumber"
+          class="font-mono text-[9px]
+                 text-cyan-300 tracking-[.3em]"
+        >
+          NODE
+        </div>
+
+        <h3
+          id="modalTitle"
+          class="font-display text-4xl font-bold mt-3"
+        >
+          Department
+        </h3>
+
+        <p
+          id="modalDescription"
+          class="text-white/40 leading-relaxed mt-5"
+        >
+          Description
+        </p>
+
+      </div>
+
+
+      <div
+        class="mt-8 p-5 rounded-2xl
+               bg-white/[.025]
+               border border-white/5"
+      >
+
+        <div class="font-mono text-[9px] text-white/20">
+          SYSTEM NOTE
+        </div>
+
+        <div class="text-sm text-white/45 mt-2">
+          Every node contributes to the same mission.
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================================================
+       JAVASCRIPT
+  ========================================================== -->
+
+  <script>
+
+    /* =========================================================
+       ICONS
+    ========================================================= */
+
+    lucide.createIcons();
+
+
+    /* =========================================================
+       NAVIGATION
+    ========================================================= */
+
+    const nav = document.getElementById("nav");
+    const progress = document.getElementById("scrollProgress");
+
+    function updateScroll() {
+
+      const y = window.scrollY;
+
+      if (y > 30) {
+        nav.classList.add("scrolled");
+      } else {
+        nav.classList.remove("scrolled");
+      }
+
+      const total =
+        document.documentElement.scrollHeight -
+        window.innerHeight;
+
+      const percent =
+        total > 0 ? (y / total) * 100 : 0;
+
+      progress.style.width = percent + "%";
+    }
+
+    window.addEventListener(
+      "scroll",
+      updateScroll,
+      { passive: true }
+    );
+
+    updateScroll();
+
+
+    /* =========================================================
+       MOBILE NAV
+    ========================================================= */
+
+    const mobileBtn =
+      document.getElementById("mobileBtn");
+
+    const mobileNav =
+      document.getElementById("mobileNav");
+
+    mobileBtn.addEventListener("click", () => {
+
+      mobileNav.classList.toggle("hidden");
+
+      const icon = mobileBtn.querySelector("i");
+
+      icon.setAttribute(
+        "data-lucide",
+        mobileNav.classList.contains("hidden")
+          ? "menu"
+          : "x"
+      );
+
+      lucide.createIcons();
+
+    });
+
+
+    document
+      .querySelectorAll(".mobile-link")
+      .forEach(link => {
+
+        link.addEventListener("click", () => {
+          mobileNav.classList.add("hidden");
+
+          const icon = mobileBtn.querySelector("i");
+          icon.setAttribute("data-lucide", "menu");
+
+          lucide.createIcons();
+        });
+
+      });
+
+
+    /* =========================================================
+       REVEAL
+    ========================================================= */
+
+    const revealObserver =
+      new IntersectionObserver(
+        entries => {
+
+          entries.forEach(entry => {
+
+            if (entry.isIntersecting) {
+
+              entry.target.classList.add("show");
+
+              revealObserver.unobserve(entry.target);
+
+            }
+
+          });
+
+        },
+        {
+          threshold: .12
+        }
+      );
+
+
+    document
+      .querySelectorAll(
+        ".reveal, .reveal-left, .reveal-right"
+      )
+      .forEach(el => {
+        revealObserver.observe(el);
+      });
+
+
+    /* =========================================================
+       CUSTOM CURSOR
+    ========================================================= */
+
+    const cursorDot =
+      document.getElementById("cursorDot");
+
+    const cursorRing =
+      document.getElementById("cursorRing");
+
+    let mouseX = 0;
+    let mouseY = 0;
+
+    let ringX = 0;
+    let ringY = 0;
+
+
+    window.addEventListener("mousemove", e => {
+
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+
+      cursorDot.style.left = mouseX + "px";
+      cursorDot.style.top = mouseY + "px";
+
+      const glow =
+        document.getElementById("heroGlow");
+
+      if (glow) {
+        glow.style.left = mouseX + "px";
+        glow.style.top = mouseY + "px";
+      }
+
+    });
+
+
+    function animateCursor() {
+
+      ringX += (mouseX - ringX) * .15;
+      ringY += (mouseY - ringY) * .15;
+
+      cursorRing.style.left = ringX + "px";
+      cursorRing.style.top = ringY + "px";
+
+      requestAnimationFrame(animateCursor);
+    }
+
+    animateCursor();
+
+
+    document
+      .querySelectorAll(
+        "a, button, input, .dna-node"
+      )
+      .forEach(el => {
+
+        el.addEventListener(
+          "mouseenter",
+          () => document.body.classList.add("cursor-hover")
+        );
+
+        el.addEventListener(
+          "mouseleave",
+          () => document.body.classList.remove("cursor-hover")
+        );
+
+      });
+
+
+    /* =========================================================
+       MAGNETIC BUTTON
+    ========================================================= */
+
+    document
+      .querySelectorAll(".magnetic")
+      .forEach(button => {
+
+        button.addEventListener("mousemove", e => {
+
+          const rect =
+            button.getBoundingClientRect();
+
+          const x =
+            e.clientX -
+            rect.left -
+            rect.width / 2;
+
+          const y =
+            e.clientY -
+            rect.top -
+            rect.height / 2;
+
+          button.style.transform =
+            `translate(${x * .12}px, ${y * .12}px)`;
+
+        });
+
+
+        button.addEventListener("mouseleave", () => {
+
+          button.style.transform = "";
+
+        });
+
+      });
+
+
+    /* =========================================================
+       PARTICLE NETWORK
+    ========================================================= */
+
+    const canvas =
+      document.getElementById("particleCanvas");
+
+    const ctx =
+      canvas.getContext("2d");
+
+    let particles = [];
+
+    const particleCount =
+      window.innerWidth < 700 ? 65 : 125;
+
+    let particleMouse = {
+      x: null,
+      y: null,
+      radius: 150
+    };
+
+
+    function resizeCanvas() {
+
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+    }
+
+    resizeCanvas();
+
+    window.addEventListener(
+      "resize",
+      resizeCanvas
+    );
+
+
+    window.addEventListener(
+      "mousemove",
+      e => {
+
+        particleMouse.x = e.clientX;
+        particleMouse.y = e.clientY;
+
+      }
+    );
+
+
+    class Particle {
+
+      constructor() {
+
+        this.x =
+          Math.random() * canvas.width;
+
+        this.y =
+          Math.random() * canvas.height;
+
+        this.vx =
+          (Math.random() - .5) * .35;
+
+        this.vy =
+          (Math.random() - .5) * .35;
+
+        this.size =
+          Math.random() * 1.6 + .5;
+
+      }
+
+
+      update() {
+
+        this.x += this.vx;
+        this.y += this.vy;
+
+        if (this.x < 0 || this.x > canvas.width)
+          this.vx *= -1;
+
+        if (this.y < 0 || this.y > canvas.height)
+          this.vy *= -1;
+
+
+        if (particleMouse.x !== null) {
+
+          const dx =
+            this.x - particleMouse.x;
+
+          const dy =
+            this.y - particleMouse.y;
+
+          const dist =
+            Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < particleMouse.radius) {
+
+            const force =
+              (particleMouse.radius - dist) /
+              particleMouse.radius;
+
+            this.x +=
+              (dx / dist) * force * .7;
+
+            this.y +=
+              (dy / dist) * force * .7;
+
+          }
+
+        }
+
+      }
+
+
+      draw() {
+
+        ctx.beginPath();
+
+        ctx.arc(
+          this.x,
+          this.y,
+          this.size,
+          0,
+          Math.PI * 2
+        );
+
+        ctx.fillStyle =
+          "rgba(103,232,249,.65)";
+
+        ctx.fill();
+
+      }
+
+    }
+
+
+    for (let i = 0; i < particleCount; i++) {
+      particles.push(new Particle());
+    }
+
+
+    function connectParticles() {
+
+      for (let a = 0; a < particles.length; a++) {
+
+        for (
+          let b = a + 1;
+          b < particles.length;
+          b++
+        ) {
+
+          const dx =
+            particles[a].x -
+            particles[b].x;
+
+          const dy =
+            particles[a].y -
+            particles[b].y;
+
+          const distance =
+            Math.sqrt(dx * dx + dy * dy);
+
+
+          if (distance < 125) {
+
+            const opacity =
+              1 - distance / 125;
+
+            ctx.beginPath();
+
+            ctx.strokeStyle =
+              `rgba(34,211,238,${opacity * .13})`;
+
+            ctx.lineWidth = .6;
+
+            ctx.moveTo(
+              particles[a].x,
+              particles[a].y
+            );
+
+            ctx.lineTo(
+              particles[b].x,
+              particles[b].y
+            );
+
+            ctx.stroke();
+
+          }
+
+        }
+
+      }
+
+    }
+
+
+    function particleLoop() {
+
+      ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
+
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+
+      connectParticles();
+
+      requestAnimationFrame(
+        particleLoop
+      );
+
+    }
+
+    particleLoop();
+
+
+    /* =========================================================
+       DNA INTERACTION
+    ========================================================= */
+
+    const dnaLabel =
+      document.getElementById("dnaLabel");
+
+    document
+      .querySelectorAll(".dna-node")
+      .forEach(node => {
+
+        node.addEventListener(
+          "mouseenter",
+          () => {
+
+            dnaLabel.textContent =
+              node.dataset.value;
+
+          }
+        );
+
+        node.addEventListener(
+          "mouseleave",
+          () => {
+
+            dnaLabel.textContent =
+              "HOVER A NODE";
+
+          }
+        );
+
+      });
+
+
+    /* =========================================================
+       DEPARTMENT CONSTELLATION
+    ========================================================= */
+
+    const infoTitle =
+      document.getElementById(
+        "departmentInfoTitle"
+      );
+
+    const infoText =
+      document.getElementById(
+        "departmentInfoText"
+      );
+
+
+    document
+      .querySelectorAll(".constellation-node")
+      .forEach(node => {
+
+        node.addEventListener("click", () => {
+
+          infoTitle.textContent =
+            node.dataset.dept;
+
+          infoText.textContent =
+            node.dataset.desc;
+
+          infoTitle.classList.remove("animate-pulse");
+
+          void infoTitle.offsetWidth;
+
+          infoTitle.classList.add("animate-pulse");
+
+        });
+
+      });
+
+
+    /* =========================================================
+       MISSION COUNTER
+    ========================================================= */
+
+    let counterStarted = false;
+
+    const impactCounter =
+      document.getElementById(
+        "impactCounter"
+      );
+
+
+    function startImpactCounter() {
+
+      if (counterStarted)
+        return;
+
+      const rect =
+        impactCounter.getBoundingClientRect();
+
+      if (rect.top < window.innerHeight * .8) {
+
+        counterStarted = true;
+
+        const target = 98.7;
+
+        const start = performance.now();
+
+        function animate(now) {
+
+          const progress =
+            Math.min(
+              (now - start) / 1800,
+              1
+            );
+
+          const eased =
+            1 - Math.pow(1 - progress, 3);
+
+          impactCounter.textContent =
+            (target * eased).toFixed(1);
+
+          if (progress < 1) {
+            requestAnimationFrame(animate);
+          }
+
+        }
+
+        requestAnimationFrame(animate);
+
+
+        document
+          .querySelectorAll(
+            ".progress-bar span"
+          )
+          .forEach(bar => {
+
+            setTimeout(() => {
+
+              bar.style.width =
+                bar.dataset.width + "%";
+
+            }, 300);
+
+          });
+
+      }
+
+    }
+
+
+    window.addEventListener(
+      "scroll",
+      startImpactCounter,
+      { passive: true }
+    );
+
+    startImpactCounter();
+
+
+    /* =========================================================
+       TERMINAL
+    ========================================================= */
+
+    const terminalOutput =
+      document.getElementById(
+        "terminalOutput"
+      );
+
+    const terminalInput =
+      document.getElementById(
+        "terminalInput"
+      );
+
+
+    const commands = {
+
+      help: `
+        <div class="text-white">Available commands:</div>
+        <div><span class="text-cyan-300">departments</span> — explore our ecosystem</div>
+        <div><span class="text-cyan-300">vision</span> — read our direction</div>
+        <div><span class="text-cyan-300">impact</span> — view movement statistics</div>
+        <div><span class="text-cyan-300">about</span> — who we are</div>
+        <div><span class="text-cyan-300">clear</span> — clear terminal</div>
+      `,
+
+      departments: `
+        <div class="text-cyan-300">8 ACTIVE NODES</div>
+        <div>01 — RISTEK</div>
+        <div>02 — PSDM</div>
+        <div>03 — KOMINFO</div>
+        <div>04 — SOSMAS</div>
+        <div>05 — EKRAF</div>
+        <div>06 — ADVOKASI</div>
+        <div>07 — MINBAK</div>
+        <div>08 — EKSTERNAL</div>
+      `,
+
+      vision: `
+        <div class="text-violet-300">VISION</div>
+        <div class="mt-1">
+          Membangun ekosistem mahasiswa yang
+          inklusif, adaptif, inovatif dan berdampak.
+        </div>
+      `,
+
+      impact: `
+        <div class="text-green-300">IMPACT REPORT</div>
+        <div>Projects........ 32</div>
+        <div>Partners........ 24</div>
+        <div>Students........ 1,204</div>
+        <div>Impact.......... 98.7%</div>
+      `,
+
+      about: `
+        <div class="text-cyan-300">ABOUT SAINTEK</div>
+        <div>
+          A student movement built around science,
+          technology, collaboration and impact.
+        </div>
+      `
+
+    };
+
+
+    function runCommand(command) {
+
+      const cmd =
+        command.trim().toLowerCase();
+
+      if (!cmd) return;
+
+
+      terminalOutput.innerHTML += `
+        <div class="text-white/20 mt-3">
+          visitor@bem:~$ ${cmd}
+        </div>
+      `;
+
+
+      if (cmd === "clear") {
+
+        terminalOutput.innerHTML = "";
+
+      } else if (commands[cmd]) {
+
+        terminalOutput.innerHTML +=
+          `<div class="mt-2 space-y-1">${commands[cmd]}</div>`;
+
+      } else {
+
+        terminalOutput.innerHTML += `
+          <div class="text-red-300 mt-2">
+            command not found: ${cmd}
+          </div>
+
+          <div class="text-white/20">
+            Type "help" for available commands.
+          </div>
+        `;
+
+      }
+
+
+      terminalOutput.scrollTop =
+        terminalOutput.scrollHeight;
+
+    }
+
+
+    terminalInput.addEventListener(
+      "keydown",
+      e => {
+
+        if (e.key === "Enter") {
+
+          runCommand(
+            terminalInput.value
+          );
+
+          terminalInput.value = "";
+
+        }
+
+      }
+    );
+
+
+    document
+      .querySelectorAll(".command-chip")
+      .forEach(button => {
+
+        button.addEventListener(
+          "click",
+          () => {
+
+            runCommand(
+              button.dataset.command
+            );
+
+          }
+        );
+
+      });
+
+
+    /* =========================================================
+       PARALLAX HERO
+    ========================================================= */
+
+    const heroTerminal =
+      document.querySelector(".terminal");
+
+    window.addEventListener(
+      "mousemove",
+      e => {
+
+        if (
+          window.innerWidth < 1000 ||
+          !heroTerminal
+        ) return;
+
+
+        const x =
+          (e.clientX /
+            window.innerWidth -
+            .5) * 2;
+
+        const y =
+          (e.clientY /
+            window.innerHeight -
+            .5) * 2;
+
+
+        heroTerminal.style.transform =
+          `translate(${x * 5}px, ${y * 5}px)`;
+
+      }
+    );
+
+
+    /* =========================================================
+       DEPARTMENT MODAL
+    ========================================================= */
+
+    const deptModal =
+      document.getElementById("deptModal");
+
+    const modalTitle =
+      document.getElementById("modalTitle");
+
+    const modalDescription =
+      document.getElementById(
+        "modalDescription"
+      );
+
+    const modalNumber =
+      document.getElementById(
+        "modalNumber"
+      );
+
+
+    function openDepartmentModal(
+      title,
+      description,
+      number
+    ) {
+
+      modalTitle.textContent = title;
+
+      modalDescription.textContent =
+        description;
+
+      modalNumber.textContent =
+        `NODE_${number}`;
+
+      deptModal.classList.add("open");
+
+      document.body.style.overflow =
+        "hidden";
+
+    }
+
+
+    function closeDepartmentModal() {
+
+      deptModal.classList.remove("open");
+
+      document.body.style.overflow =
+        "";
+
+    }
+
+
+    document
+      .getElementById("closeModal")
+      .addEventListener(
+        "click",
+        closeDepartmentModal
+      );
+
+
+    deptModal.addEventListener(
+      "click",
+      e => {
+
+        if (e.target === deptModal) {
+          closeDepartmentModal();
+        }
+
+      }
+    );
+
+
+    document.addEventListener(
+      "keydown",
+      e => {
+
+        if (e.key === "Escape") {
+          closeDepartmentModal();
+        }
+
+      }
+    );
+
+
+    /* =========================================================
+       INITIAL ICON REFRESH
+    ========================================================= */
+
+    lucide.createIcons();
+
+  </script>
+
+</body>
+</html>

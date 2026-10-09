@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Create Profile Mahasiswa</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body class="bg-slate-100 min-h-screen flex items-center justify-center p-6">
+
+    <!-- =========================
+         BUTTON OPEN MODAL
+    ========================== -->
+
+    <button
+        id="openModal"
+        class="flex items-center gap-2 px-5 py-3
+        bg-indigo-600 hover:bg-indigo-700
+        text-white font-semibold rounded-xl
+        shadow-lg shadow-indigo-200
+        transition duration-200">
+
+        <i data-lucide="user-plus" class="w-5 h-5"></i>
+
+        Create Profile
+    </button>
+
+
+    <!-- =========================
+         MODAL
+    ========================== -->
+
+    <div
+        id="profileModal"
+        class="fixed inset-0 z-50 hidden
+        items-center justify-center p-4">
+
+        <!-- BACKDROP -->
+
+        <div
+            id="modalBackdrop"
+            class="absolute inset-0
+            bg-slate-950/60 backdrop-blur-sm">
+        </div>
+
+
+        <!-- MODAL CONTAINER -->
+
+        <div
+            class="relative w-full max-w-3xl
+            max-h-[92vh] overflow-y-auto
+            bg-white rounded-3xl shadow-2xl
+            animate-modal">
+
+
+            <!-- =========================
+                 HEADER
+            ========================== -->
+
+            <div
+                class="sticky top-0 z-10
+                flex items-center justify-between
+                px-6 py-5
+                bg-white/95 backdrop-blur
+                border-b border-slate-200">
+
+                <div>
+
+                    <div class="flex items-center gap-3">
+
+                        <div
+                            class="w-11 h-11 rounded-xl
+                            bg-indigo-100 text-indigo-600
+                            flex items-center justify-center">
+
+                            <i data-lucide="user-plus"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h2 class="text-xl font-bold text-slate-800">
+                                Create Profile
+                            </h2>
+
+                            <p class="text-sm text-slate-500">
+                                Lengkapi identitas mahasiswa
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CLOSE -->
+
+                <button
+                    id="closeModal"
+                    class="w-10 h-10 rounded-xl
+                    flex items-center justify-center
+                    text-slate-400
+                    hover:text-slate-700
+                    hover:bg-slate-100
+                    transition">
+
+                    <i data-lucide="x"></i>
+
+                </button>
+
+            </div>
+
+
+            <!-- =========================
+                 FORM
+            ========================== -->
+
+            <form id="profileForm" class="p-6">
+
+
+                <!-- =========================
+                     PROFILE PHOTO
+                ========================== -->
+
+                <div
+                    class="mb-8 p-5 rounded-2xl
+                    bg-slate-50 border border-slate-200">
+
+                    <div class="flex flex-col sm:flex-row
+                        items-center gap-5">
+
+                        <!-- Avatar -->
+
+                        <div
+                            id="avatarPreview"
+                            class="w-24 h-24 rounded-2xl
+                            bg-gradient-to-br
+                            from-indigo-500 to-purple-600
+                            flex items-center justify-center
+                            text-white shadow-lg">
+
+                            <i data-lucide="user" class="w-10 h-10"></i>
+
+                        </div>
+
+
+                        <div class="text-center sm:text-left">
+
+                            <h3 class="font-semibold text-slate-800">
+                                Foto Profil
+                            </h3>
+
+                            <p class="text-sm text-slate-500 mt-1 mb-3">
+                                Gunakan foto formal terbaik Anda.
+                            </p>
+
+
+                            <label
+                                class="inline-flex items-center gap-2
+                                px-4 py-2.5
+                                bg-white border border-slate-200
+                                rounded-xl
+                                text-sm font-medium
+                                cursor-pointer
+                                hover:bg-slate-100
+                                transition">
+
+                                <i data-lucide="upload" class="w-4"></i>
+
+                                Upload Foto
+
+                                <input
+                                    id="photoInput"
+                                    type="file"
+                                    accept="image/*"
+                                    class="hidden">
+
+                            </label>
+
+                            <p class="text-xs text-slate-400 mt-2">
+                                JPG, PNG • Maksimal 2 MB
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================
+                     SECTION IDENTITAS
+                ========================== -->
+
+                <div class="mb-8">
+
+                    <div class="flex items-center gap-3 mb-5">
+
+                        <div
+                            class="w-9 h-9 rounded-lg
+                            bg-indigo-100 text-indigo-600
+                            flex items-center justify-center">
+
+                            <i data-lucide="contact" class="w-5"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h3 class="font-bold text-slate-800">
+                                Identitas Mahasiswa
+                            </h3>
+
+                            <p class="text-xs text-slate-500">
+                                Informasi dasar mahasiswa
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+
+                        <!-- Nama -->
+
+                        <div class="md:col-span-2">
+
+                            <label
+                                class="block text-sm font-semibold
+                                text-slate-700 mb-2">
+
+                                Nama Lengkap
+                                <span class="text-red-500">*</span>
+
+                            </label>
+
+                            <div class="relative">
+
+                                <i data-lucide="user"
+                                    class="absolute left-4 top-1/2
+                                    -translate-y-1/2
+                                    w-5 h-5 text-slate-400">
+                                </i>
+
+                                <input
+                                    type="text"
+                                    name="nama"
+                                    required
+                                    placeholder="Masukkan nama lengkap"
+                                    class="w-full pl-12 pr-4 py-3
+                                    rounded-xl
+                                    border border-slate-200
+                                    bg-white
+                                    outline-none
+                                    focus:border-indigo-500
+                                    focus:ring-4
+                                    focus:ring-indigo-100
+                                    transition">
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- NIM -->
+
+                        <div>
+
+                            <label
+                                class="block text-sm font-semibold
+                                text-slate-700 mb-2">
+
+                                NIM
+                                <span class="text-red-500">*</span>
+
+                            </label>
+
+                            <div class="relative">
+
+                                <i data-lucide="badge"
+                                    class="absolute left-4 top-1/2
+                                    -translate-y-1/2
+                                    w-5 h-5 text-slate-400">
+                                </i>
+
+                                <input
+                                    type="text"
+                                    name="nim"
+                                    required
+                                    placeholder="Contoh: 2023123456"
+                                    class="w-full pl-12 pr-4 py-3
+                                    rounded-xl
+                                    border border-slate-200
+                                    outline-none
+                                    focus:border-indigo-500
+                                    focus:ring-4
+                                    focus:ring-indigo-100">
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- NIK -->
+
+                        <div>
+
+                            <label
+                                class="block text-sm font-semibold
+                                text-slate-700 mb-2">
+
+                                NIK
+
+                            </label>
+
+                            <input
+                                type="text"
+                                name="nik"
+                                maxlength="16"
+                                placeholder="16 digit NIK"
+                                class="w-full px-4 py-3
+                                rounded-xl
+                                border border-slate-200
+                                outline-none
+                                focus:border-indigo-500
+                                focus:ring-4
+                                focus:ring-indigo-100">
+
+                        </div>
+
+
+                        <!-- Tempat lahir -->
+
+                        <div>
+
+                            <label
+                                class="block text-sm font-semibold
+                                text-slate-700 mb-2">
+
+                                Tempat Lahir
+
+                            </label>
+
+                            <input
+                                type="text"
+                                name="tempat_lahir"
+                                placeholder="Contoh: Bondowoso"
+                                class="w-full px-4 py-3
+                                rounded-xl
+                                border border-slate-200
+                                outline-none
+                                focus:border-indigo-500
+                                focus:ring-4
+                                focus:ring-indigo-100">
+
+                        </div>
+
+
+                        <!-- Tanggal lahir -->
+
+                        <div>
+
+                            <label
+                                class="block text-sm font-semibold
+                                text-slate-700 mb-2">
+
+                                Tanggal Lahir
+
+                            </label>
+
+                            <input
+                                type="date"
+                                name="tanggal_lahir"
+                                class="w-full px-4 py-3
+                                rounded-xl
+                                border border-slate-200
+                                outline-none
+                                focus:border-indigo-500
+                                focus:ring-4
+                                focus:ring-indigo-100">
+
+                        </div>
+
+
+                        <!-- Jenis kelamin -->
+
+                        <div>
+
+                            <label
+                                class="block text-sm font-semibold
+                                text-slate-700 mb-2">
+
+                                Jenis Kelamin
+
+                            </label>
+
+                            <select
+                                name="jenis_kelamin"
+                                class="w-full px-4 py-3
+                                rounded-xl
+                                border border-slate-200
+                                bg-white
+                                outline-none
+                                focus:border-indigo-500
+                                focus:ring-4
+                                focus:ring-indigo-100">
+
+                                <option value="">
+                                    Pilih jenis kelamin
+                                </option>
+
+                                <option value="L">
+                                    Laki-laki
+                                </option>
+
+                                <option value="P">
+                                    Perempuan
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- Agama -->
+
+                        <div>
+
+                            <label
+                                class="block text-sm font-semibold
+                                text-slate-700 mb-2">
+
+                                Agama
+
+                            </label>
+
+                            <select
+                                name="agama"
+                                class="w-full px-4 py-3
+                                rounded-xl
+                                border border-slate-200
+                                bg-white
+                                outline-none
+                                focus:border-indigo-500
+                                focus:ring-4
+                                focus:ring-indigo-100">
+
+                                <option value="">
+                                    Pilih agama
+                                </option>
+
+                                <option>Islam</option>
+                                <option>Kristen</option>
+                                <option>Katolik</option>
+                                <option>Hindu</option>
+                                <option>Buddha</option>
+                                <option>Konghucu</option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================
+                     AKADEMIK
+                ========================== -->
+
+                <div class="mb-8">
+
+                    <div class="flex items-center gap-3 mb-5">
+
+                        <div
+                            class="w-9 h-9 rounded-lg
+                            bg-purple-100 text-purple-600
+                            flex items-center justify-center">
+
+                            <i data-lucide="graduation-cap"
+                                class="w-5">
+                            </i>
+
+                        </div>
+
+                        <div>
+
+                            <h3 class="font-bold text-slate-800">
+                                Data Akademik
+                            </h3>
+
+                            <p class="text-xs text-slate-500">
+                                Informasi perkuliahan mahasiswa
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+
+                        <!-- Fakultas -->
+
+                        <div>
+
+                            <label
+                                class="block text-sm font-semibold
+                                text-slate-700 mb-2">
+
+                                Fakultas
+                                <span class="text-red-500">*</span>
+
+                            </label>
+
+                            <select
+                                id="fakultas"
+                                required
+                                class="w-full px-4 py-3
+                                rounded-xl
+                                border border-slate-200
+                                bg-white
+                                outline-none
+                                focus:border-indigo-500
+                                focus:ring-4
+                                focus:ring-indigo-100">
+
+                                <option value="">
+                                    Pilih fakultas
+                                </option>
+
+                                <option value="teknik">
+                                    Fakultas Teknik
+                                </option>
+
+                                <option value="ekonomi">
+                                    Fakultas Ekonomi
+                                </option>
+
+                                <option value="hukum">
+                                    Fakultas Hukum
+                                </option>
+
+                                <option value="fisip">
+                                    Fakultas Ilmu Sosial
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- Program studi -->
+
+                        <div>
+
+                            <label
+                                class="block text-sm font-semibold
+                                text-slate-700 mb-2">
+
+                                Program Studi
+                                <span class="text-red-500">*</span>
+
+                            </label>
+
+                            <select
+                                id="prodi"
+                                required
+                                class="w-full px-4 py-3
+                                rounded-xl
+                                border border-slate-200
+                                bg-white
+                                outline-none
+                                focus:border-indigo-500
+                                focus:ring-4
+                                focus:ring-indigo-100">
+
+                                <option value="">
+                                    Pilih program studi
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- Angkatan -->
+
+                        <div>
+
+                            <label
+                                class="block text-sm font-semibold
+                                text-slate-700 mb-2">
+
+                                Angkatan
+
+                            </label>
+
+                            <select
+                                class="w-full px-4 py-3
+                                rounded-xl
+                                border border-slate-200
+                                bg-white
+                                outline-none
+                                focus:border-indigo-500
+                                focus:ring-4
+                                focus:ring-indigo-100">
+
+                                <option>2026</option>
+                                <option>2025</option>
+                                <option>2024</option>
+                                <option>2023</option>
+                                <option>2022</option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- Semester -->
+
+                        <div>
+
+                            <label
+                                class="block text-sm font-semibold
+                                text-slate-700 mb-2">
+
+                                Semester
+
+                            </label>
+
+                            <select
+                                class="w-full px-4 py-3
+                                rounded-xl
+                                border border-slate-200
+                                bg-white
+                                outline-none
+                                focus:border-indigo-500
+                                focus:ring-4
+                                focus:ring-indigo-100">
+
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                                <option>5</option>
+                                <option>6</option>
+                                <option>7</option>
+                                <option>8</option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================
+                     KONTAK
+                ========================== -->
+
+                <div class="mb-8">
+
+                    <div class="flex items-center gap-3 mb-5">
+
+                        <div
+                            class="w-9 h-9 rounded-lg
+                            bg-emerald-100 text-emerald-600
+                            flex items-center justify-center">
+
+                            <i data-lucide="phone"
+                                class="w-5">
+                            </i>
+
+                        </div>
+
+                        <div>
+
+                            <h3 class="font-bold text-slate-800">
+                                Informasi Kontak
+                            </h3>
+
+                            <p class="text-xs text-slate-500">
+                                Kontak yang dapat dihubungi
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+
+                        <!-- Email -->
+
+                        <div>
+
+                            <label
+                                class="block text-sm font-semibold
+                                text-slate-700 mb-2">
+
+                                Email
+                                <span class="text-red-500">*</span>
+
+                            </label>
+
+                            <div class="relative">
+
+                                <i data-lucide="mail"
+                                    class="absolute left-4 top-1/2
+                                    -translate-y-1/2
+                                    w-5 text-slate-400">
+                                </i>
+
+                                <input
+                                    type="email"
+                                    required
+                                    placeholder="nama@email.com"
+                                    class="w-full pl-12 pr-4 py-3
+                                    rounded-xl
+                                    border border-slate-200
+                                    outline-none
+                                    focus:border-indigo-500
+                                    focus:ring-4
+                                    focus:ring-indigo-100">
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Phone -->
+
+                        <div>
+
+                            <label
+                                class="block text-sm font-semibold
+                                text-slate-700 mb-2">
+
+                                Nomor WhatsApp
+                                <span class="text-red-500">*</span>
+
+                            </label>
+
+                            <div class="relative">
+
+                                <i data-lucide="phone"
+                                    class="absolute left-4 top-1/2
+                                    -translate-y-1/2
+                                    w-5 text-slate-400">
+                                </i>
+
+                                <input
+                                    type="tel"
+                                    required
+                                    placeholder="08xxxxxxxxxx"
+                                    class="w-full pl-12 pr-4 py-3
+                                    rounded-xl
+                                    border border-slate-200
+                                    outline-none
+                                    focus:border-indigo-500
+                                    focus:ring-4
+                                    focus:ring-indigo-100">
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================
+                     ALAMAT
+                ========================== -->
+
+                <div class="mb-8">
+
+                    <div class="flex items-center gap-3 mb-5">
+
+                        <div
+                            class="w-9 h-9 rounded-lg
+                            bg-orange-100 text-orange-600
+                            flex items-center justify-center">
+
+                            <i data-lucide="map-pin"
+                                class="w-5">
+                            </i>
+
+                        </div>
+
+                        <div>
+
+                            <h3 class="font-bold text-slate-800">
+                                Alamat
+                            </h3>
+
+                            <p class="text-xs text-slate-500">
+                                Alamat tempat tinggal mahasiswa
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="space-y-5">
+
+
+                        <div>
+
+                            <label
+                                class="block text-sm font-semibold
+                                text-slate-700 mb-2">
+
+                                Alamat Lengkap
+
+                            </label>
+
+                            <textarea
+                                rows="3"
+                                placeholder="Masukkan alamat lengkap..."
+                                class="w-full px-4 py-3
+                                rounded-xl
+                                border border-slate-200
+                                outline-none
+                                resize-none
+                                focus:border-indigo-500
+                                focus:ring-4
+                                focus:ring-indigo-100"></textarea>
+
+                        </div>
+
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+                            <div>
+
+                                <label
+                                    class="block text-sm font-semibold
+                                    text-slate-700 mb-2">
+
+                                    Kabupaten/Kota
+
+                                </label>
+
+                                <input
+                                    type="text"
+                                    placeholder="Contoh: Bondowoso"
+                                    class="w-full px-4 py-3
+                                    rounded-xl
+                                    border border-slate-200
+                                    outline-none
+                                    focus:border-indigo-500
+                                    focus:ring-4
+                                    focus:ring-indigo-100">
+
+                            </div>
+
+
+                            <div>
+
+                                <label
+                                    class="block text-sm font-semibold
+                                    text-slate-700 mb-2">
+
+                                    Provinsi
+
+                                </label>
+
+                                <input
+                                    type="text"
+                                    placeholder="Contoh: Jawa Timur"
+                                    class="w-full px-4 py-3
+                                    rounded-xl
+                                    border border-slate-200
+                                    outline-none
+                                    focus:border-indigo-500
+                                    focus:ring-4
+                                    focus:ring-indigo-100">
+
+                            </div>
+
+
+                            <div>
+
+                                <label
+                                    class="block text-sm font-semibold
+                                    text-slate-700 mb-2">
+
+                                    Kode Pos
+
+                                </label>
+
+                                <input
+                                    type="text"
+                                    placeholder="68211"
+                                    class="w-full px-4 py-3
+                                    rounded-xl
+                                    border border-slate-200
+                                    outline-none
+                                    focus:border-indigo-500
+                                    focus:ring-4
+                                    focus:ring-indigo-100">
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================
+                     FOOTER BUTTON
+                ========================== -->
+
+                <div
+                    class="flex flex-col-reverse sm:flex-row
+                    sm:justify-end gap-3
+                    pt-5 border-t border-slate-200">
+
+                    <button
+                        type="button"
+                        id="cancelBtn"
+                        class="px-5 py-3 rounded-xl
+                        border border-slate-200
+                        text-slate-600 font-semibold
+                        hover:bg-slate-100
+                        transition">
+
+                        Batal
+
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="px-6 py-3 rounded-xl
+                        bg-indigo-600 hover:bg-indigo-700
+                        text-white font-semibold
+                        flex items-center justify-center
+                        gap-2
+                        shadow-lg shadow-indigo-200
+                        transition">
+
+                        <i data-lucide="save" class="w-5"></i>
+
+                        Simpan Profile
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         SUCCESS TOAST
+    ========================== -->
+
+    <div
+        id="toast"
+        class="fixed right-5 bottom-5
+        translate-y-24 opacity-0
+        transition-all duration-300
+        z-[100]">
+
+        <div
+            class="flex items-center gap-3
+            bg-slate-900 text-white
+            px-5 py-4 rounded-2xl shadow-2xl">
+
+            <div
+                class="w-9 h-9 rounded-full
+                bg-emerald-500
+                flex items-center justify-center">
+
+                <i data-lucide="check" class="w-5"></i>
+
+            </div>
+
+            <div>
+
+                <p class="font-semibold">
+                    Berhasil!
+                </p>
+
+                <p class="text-xs text-slate-300">
+                    Profile berhasil dibuat.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================== -->
+
+    <script>
+
+        // Initialize Lucide
+        lucide.createIcons();
+
+
+        // Elements
+        const openModal = document.getElementById("openModal");
+        const closeModal = document.getElementById("closeModal");
+        const cancelBtn = document.getElementById("cancelBtn");
+        const modalBackdrop = document.getElementById("modalBackdrop");
+        const profileModal = document.getElementById("profileModal");
+        const profileForm = document.getElementById("profileForm");
+
+        const toast = document.getElementById("toast");
+
+        const photoInput = document.getElementById("photoInput");
+        const avatarPreview = document.getElementById("avatarPreview");
+
+        const fakultas = document.getElementById("fakultas");
+        const prodi = document.getElementById("prodi");
+
+
+        // =========================
+        // OPEN MODAL
+        // =========================
+
+        openModal.addEventListener("click", () => {
+
+            profileModal.classList.remove("hidden");
+
+            profileModal.classList.add("flex");
+
+            document.body.classList.add("overflow-hidden");
+
+        });
+
+
+        // =========================
+        // CLOSE MODAL
+        // =========================
+
+        function closeProfileModal() {
+
+            profileModal.classList.add("hidden");
+
+            profileModal.classList.remove("flex");
+
+            document.body.classList.remove("overflow-hidden");
+
+        }
+
+
+        closeModal.addEventListener("click", closeProfileModal);
+
+        cancelBtn.addEventListener("click", closeProfileModal);
+
+        modalBackdrop.addEventListener("click", closeProfileModal);
+
+
+        // ESC
+        document.addEventListener("keydown", (event) => {
+
+            if (event.key === "Escape") {
+
+                closeProfileModal();
+
+            }
+
+        });
+
+
+        // =========================
+        // PREVIEW FOTO
+        // =========================
+
+        photoInput.addEventListener("change", function () {
+
+            const file = this.files[0];
+
+            if (!file) return;
+
+
+            // Max 2 MB
+
+            if (file.size > 2 * 1024 * 1024) {
+
+                alert("Ukuran foto maksimal 2 MB.");
+
+                this.value = "";
+
+                return;
+
+            }
+
+
+            const reader = new FileReader();
+
+
+            reader.onload = function (event) {
+
+                avatarPreview.innerHTML = `
+                    <img
+                        src="${event.target.result}"
+                        class="w-full h-full object-cover rounded-2xl"
+                        alt="Preview Foto">
+                `;
+
+            };
+
+
+            reader.readAsDataURL(file);
+
+        });
+
+
+        // =========================
+        // DYNAMIC PROGRAM STUDI
+        // =========================
+
+        const prodiData = {
+
+            teknik: [
+                "Teknik Informatika",
+                "Teknik Sipil",
+                "Teknik Elektro",
+                "Teknik Mesin"
+            ],
+
+            ekonomi: [
+                "Manajemen",
+                "Akuntansi",
+                "Ekonomi Pembangunan"
+            ],
+
+            hukum: [
+                "Ilmu Hukum"
+            ],
+
+            fisip: [
+                "Ilmu Komunikasi",
+                "Administrasi Publik",
+                "Sosiologi"
+            ]
+
+        };
+
+
+        fakultas.addEventListener("change", function () {
+
+            const selected = this.value;
+
+            prodi.innerHTML = `
+                <option value="">
+                    Pilih program studi
+                </option>
+            `;
+
+
+            if (prodiData[selected]) {
+
+                prodiData[selected].forEach((item) => {
+
+                    const option = document.createElement("option");
+
+                    option.value = item;
+
+                    option.textContent = item;
+
+                    prodi.appendChild(option);
+
+                });
+
+            }
+
+        });
+
+
+        // =========================
+        // SUBMIT FORM
+        // =========================
+
+        profileForm.addEventListener("submit", function (event) {
+
+            event.preventDefault();
+
+
+            // Simulasi request ke backend
+
+            const formData = new FormData(profileForm);
+
+            console.log("Data profile:");
+
+            for (const [key, value] of formData.entries()) {
+
+                console.log(key, value);
+
+            }
+
+
+            // Tutup modal
+
+            closeProfileModal();
+
+
+            // Tampilkan toast
+
+            showToast();
+
+        });
+
+
+        // =========================
+        // TOAST
+        // =========================
+
+        function showToast() {
+
+            toast.classList.remove(
+                "translate-y-24",
+                "opacity-0"
+            );
+
+            toast.classList.add(
+                "translate-y-0",
+                "opacity-100"
+            );
+
+
+            setTimeout(() => {
+
+                toast.classList.remove(
+                    "translate-y-0",
+                    "opacity-100"
+                );
+
+                toast.classList.add(
+                    "translate-y-24",
+                    "opacity-0"
+                );
+
+            }, 3000);
+
+        }
+
+    </script>
+
+
+    <!-- =========================
+         CUSTOM ANIMATION
+    ========================== -->
+
+    <style>
+
+        @keyframes modalShow {
+
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+
+        }
+
+
+        .animate-modal {
+
+            animation: modalShow 0.25s ease-out;
+
+        }
+
+    </style>
+
+</body>
+</html>

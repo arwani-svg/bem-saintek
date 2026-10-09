@@ -1,0 +1,197 @@
+<script setup>
+import { Link, useForm } from '@inertiajs/vue3'
+import ModalPage from '@/components/dashboard/ModalPage.vue'
+
+const props = defineProps({
+    profile: Object,
+    canEditPrestasi: Boolean,
+    user: Object,
+})
+
+const parsePrestasi = () => {
+    const list = props.profile.prestasi_list ?? null
+    if (Array.isArray(list) && list.length > 0) return [...list]
+    return ['']
+}
+
+const initialPrestasi = parsePrestasi()
+
+const form = useForm({
+    name: props.profile.name,
+    password: '',
+    password_confirmation: '',
+    email: props.profile.email || '',
+    nomor_telepon: props.profile.nomor_telepon || '',
+    jenis_kelamin: props.profile.jenis_kelamin,
+    tempat_lahir: props.profile.tempat_lahir || '',
+    tanggal_lahir: props.profile.tanggal_lahir ? String(props.profile.tanggal_lahir).substring(0, 10) : '',
+    desa: props.profile.desa || '',
+    kecamatan: props.profile.kecamatan || '',
+    kabupaten: props.profile.kabupaten || '',
+    provinsi: props.profile.provinsi || '',
+    kata_motivasi: props.profile.kata_motivasi || '',
+    privasi: !!props.profile.privasi,
+    prestasi: initialPrestasi,
+})
+
+const addPrestasi = () => {
+    if (form.prestasi.length < 50) form.prestasi.push('')
+}
+
+const removePrestasi = (index) => {
+    form.prestasi.splice(index, 1)
+    if (form.prestasi.length === 0) form.prestasi.push('')
+}
+
+const submit = () => {
+    form.put('/profil')
+}
+</script>
+
+<template>
+    <ModalPage
+        title="Edit Profil"
+        subtitle="NIM, role, dan data akademik dikunci — hubungi admin untuk mengubahnya."
+        eyebrow="SAINTEK.OS // PROFIL"
+        size="xl"
+        backHref="/profil"
+    >
+        <form @submit.prevent="submit" class="space-y-6">
+            <!-- Data yang bisa diubah -->
+            <div class="space-y-6">
+                <h3 class="font-display text-lg font-bold text-white">Data Diri</h3>
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                    <div>
+                        <label class="dash-label">Nama Lengkap *</label>
+                        <input v-model="form.name" type="text" class="dash-input" required />
+                        <p v-if="form.errors.name" class="dash-error">{{ form.errors.name }}</p>
+                    </div>
+                    <div>
+                        <label class="dash-label">Jenis Kelamin *</label>
+                        <select v-model="form.jenis_kelamin" class="dash-input cursor-pointer">
+                            <option value="laki-laki">Laki-laki</option>
+                            <option value="perempuan">Perempuan</option>
+                        </select>
+                        <p v-if="form.errors.jenis_kelamin" class="dash-error">{{ form.errors.jenis_kelamin }}</p>
+                    </div>
+                    <div>
+                        <label class="dash-label">Email</label>
+                        <input v-model="form.email" type="email" class="dash-input" placeholder="email@contoh.com" />
+                        <p v-if="form.errors.email" class="dash-error">{{ form.errors.email }}</p>
+                    </div>
+                    <div>
+                        <label class="dash-label">Nomor Telepon</label>
+                        <input v-model="form.nomor_telepon" type="text" maxlength="20" class="dash-input" placeholder="08..." />
+                        <p v-if="form.errors.nomor_telepon" class="dash-error">{{ form.errors.nomor_telepon }}</p>
+                    </div>
+                    <div>
+                        <label class="dash-label">Tempat Lahir</label>
+                        <input v-model="form.tempat_lahir" type="text" class="dash-input" />
+                    </div>
+                    <div>
+                        <label class="dash-label">Tanggal Lahir</label>
+                        <input v-model="form.tanggal_lahir" type="date" class="dash-input" />
+                        <p v-if="form.errors.tanggal_lahir" class="dash-error">{{ form.errors.tanggal_lahir }}</p>
+                    </div>
+                    <div>
+                        <label class="dash-label">Password Baru <span class="font-normal text-white/30">(kosongkan bila tidak diganti)</span></label>
+                        <input v-model="form.password" type="password" class="dash-input" autocomplete="new-password" />
+                        <p v-if="form.errors.password" class="dash-error">{{ form.errors.password }}</p>
+                    </div>
+                    <div>
+                        <label class="dash-label">Konfirmasi Password Baru</label>
+                        <input v-model="form.password_confirmation" type="password" class="dash-input" autocomplete="new-password" />
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="dash-label">Kata Motivasi</label>
+                        <textarea v-model="form.kata_motivasi" rows="2" maxlength="1000" class="dash-input"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alamat -->
+            <div class="mt-6 space-y-6 border-t border-white/5 pt-6">
+                <h3 class="font-display text-lg font-bold text-white">Alamat</h3>
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                    <div>
+                        <label class="dash-label">Desa</label>
+                        <input v-model="form.desa" type="text" class="dash-input" />
+                    </div>
+                    <div>
+                        <label class="dash-label">Kecamatan</label>
+                        <input v-model="form.kecamatan" type="text" class="dash-input" />
+                    </div>
+                    <div>
+                        <label class="dash-label">Kabupaten</label>
+                        <input v-model="form.kabupaten" type="text" class="dash-input" />
+                    </div>
+                    <div>
+                        <label class="dash-label">Provinsi</label>
+                        <input v-model="form.provinsi" type="text" class="dash-input" />
+                    </div>
+                    <label class="flex cursor-pointer items-center gap-3 md:col-span-2">
+                        <input v-model="form.privasi" type="checkbox" class="h-4 w-4 accent-cyan-300" />
+                        <span class="text-sm text-white/60">Tampilkan profil saya sebagai publik</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Prestasi: khusus pengurus -->
+            <div v-if="canEditPrestasi" class="mt-6 space-y-4 border-t border-white/5 pt-6">
+                <h3 class="font-display text-lg font-bold text-white">Prestasi</h3>
+                <div class="space-y-3">
+                    <div v-for="(point, idx) in form.prestasi" :key="idx" class="flex items-start gap-2">
+                        <span class="mt-2.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-cyan-300/10 font-mono text-xs font-bold text-cyan-300">{{ idx + 1 }}</span>
+                        <input v-model="form.prestasi[idx]" type="text" maxlength="255" class="dash-input" placeholder="cth: Juara 1 PKM 2024" />
+                        <button v-if="form.prestasi.length > 1" type="button" @click="removePrestasi(idx)" class="mt-1 shrink-0 rounded-xl border border-red-400/20 p-2 text-red-300 transition hover:bg-red-400/10" title="Hapus">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        </button>
+                    </div>
+                    <button v-if="form.prestasi.length < 50" type="button" @click="addPrestasi" class="dash-btn-ghost !py-2 text-sm">+ Tambah</button>
+                </div>
+            </div>
+            <div v-else class="mt-6 border-t border-white/5 pt-6">
+                <p class="text-sm text-white/40">Prestasi hanya bisa diubah pengurus — hubungi admin bila ada pembaruan.</p>
+            </div>
+
+            <!-- Data resmi: terkunci -->
+            <div class="mt-6 space-y-6 border-t border-white/5 pt-6 opacity-70">
+                <h3 class="font-display text-lg font-bold text-white">Data Resmi <span class="font-mono text-xs font-normal text-amber-300">terkunci</span></h3>
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                    <div>
+                        <label class="dash-label">NIM</label>
+                        <input :value="profile.nim" type="text" disabled class="dash-input font-mono opacity-60" />
+                    </div>
+                    <div>
+                        <label class="dash-label">Role</label>
+                        <input :value="profile.role" type="text" disabled class="dash-input capitalize opacity-60" />
+                    </div>
+                    <div>
+                        <label class="dash-label">Prodi</label>
+                        <input :value="profile.prodi" type="text" disabled class="dash-input opacity-60" />
+                    </div>
+                    <div>
+                        <label class="dash-label">Angkatan</label>
+                        <input :value="profile.angkatan" type="text" disabled class="dash-input opacity-60" />
+                    </div>
+                    <div>
+                        <label class="dash-label">Kelas</label>
+                        <input :value="profile.kelas || '-'" type="text" disabled class="dash-input opacity-60" />
+                    </div>
+                    <div>
+                        <label class="dash-label">Status</label>
+                        <input :value="profile.status" type="text" disabled class="dash-input capitalize opacity-60" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-3 border-t border-white/5 pt-5">
+                <Link href="/profil" class="dash-btn-ghost">Batal</Link>
+                <button type="submit" :disabled="form.processing" class="dash-btn-primary">
+                    <span v-if="form.processing">Menyimpan...</span>
+                    <span v-else>Simpan Perubahan</span>
+                </button>
+            </div>
+        </form>
+    </ModalPage>
+</template>

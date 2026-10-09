@@ -1,0 +1,622 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+    --font-sans: 'DM Sans', 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-display: 'Space Grotesk', 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-mono: 'DM Mono', ui-monospace, monospace;
+}
+
+/* ===== Scroll halus + cegah scrollbar horizontal dari animasi geser ===== */
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    overflow-x: clip;
+}
+
+/* ===== Scrollbar ramping khas dashboard (pengganti bawaan browser) ===== */.saintek-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(34 211 238 / 0.25) transparent;
+}
+.saintek-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+.saintek-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+.saintek-scroll::-webkit-scrollbar-thumb {
+    background: rgb(34 211 238 / 0.22);
+    border-radius: 999px;
+}
+.saintek-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgb(34 211 238 / 0.45);
+}
+
+/* ===== Cetak rekap (sembunyikan chrome dashboard) ===== */
+@media print {
+    aside,
+    header,
+    .no-print {
+        display: none !important;
+    }
+}
+
+/* ===== Scroll-reveal (dipakai komponen ui/Reveal.vue) ===== */
+.reveal {
+    opacity: 0;
+    transition:
+        opacity var(--reveal-duration, 700ms) ease var(--reveal-delay, 0ms),
+        transform var(--reveal-duration, 700ms) cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms);
+    will-change: opacity, transform;
+}
+
+.reveal-fade { transform: none; }
+.reveal-up { transform: translateY(36px); }
+.reveal-down { transform: translateY(-36px); }
+.reveal-left { transform: translateX(40px); }
+.reveal-right { transform: translateX(-40px); }
+.reveal-zoom { transform: scale(0.92); }
+
+.reveal.is-visible {
+    opacity: 1;
+    transform: none;
+}
+
+/* ===== Keyframes untuk aksen hero & navbar ===== */
+@keyframes nav-drop-in {
+    from { opacity: 0; transform: translateY(-100%); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes float-y {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-14px); }
+}
+
+@keyframes float-y-soft {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+.animate-nav-in {
+    animation: nav-drop-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-float {
+    animation: float-y 5s ease-in-out infinite;
+}
+
+.animate-float-soft {
+    animation: float-y-soft 6s ease-in-out infinite;
+}
+
+/* Hormati pengguna yang mematikan animasi di OS */
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    .reveal {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+    }
+
+    .animate-nav-in,
+    .animate-float,
+    .animate-float-soft {
+        animation: none !important;
+    }
+}
+
+/* ===== BEM SAINTEK landing (adaptasi desain/chatgpt2.html) ===== */
+.bem-saintek {
+    background:
+        radial-gradient(circle at 50% -10%, rgba(34, 211, 238, 0.08), transparent 28%),
+        #03050a;
+    color: #fff;
+    overflow-x: clip;
+}
+
+.bem-saintek ::selection {
+    background: rgba(34, 211, 238, 0.35);
+    color: #fff;
+}
+
+.bem-saintek .grid-bg {
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+    background-size: 55px 55px;
+}
+
+.bem-saintek .noise {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    pointer-events: none;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.bem-saintek .gradient-text {
+    background: linear-gradient(105deg, #fff 5%, #67e8f9 42%, #818cf8 75%, #c4b5fd);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.bem-saintek .glass {
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    backdrop-filter: blur(16px);
+}
+
+.bem-saintek .terminal {
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015));
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    box-shadow: 0 30px 100px rgba(0, 0, 0, 0.4), inset 0 1px rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(20px);
+}
+
+.bem-saintek .terminal-line {
+    opacity: 0;
+    animation: terminal-in 0.6s ease forwards;
+}
+
+@keyframes terminal-in {
+    to { opacity: 1; }
+}
+
+.bem-saintek .hero-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 0.79;
+    letter-spacing: -0.075em;
+}
+
+.bem-saintek .hero-word {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(80px);
+    animation: hero-word 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes hero-word {
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.bem-saintek .hero-line {
+    width: 0;
+    animation: line-grow 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.8s forwards;
+}
+
+@keyframes line-grow {
+    to { width: 100%; }
+}
+
+.bem-saintek .blink {
+    animation: blink 1s steps(1) infinite;
+}
+
+@keyframes blink {
+    50% { opacity: 0; }
+}
+
+.bem-saintek .marquee {
+    overflow: hidden;
+}
+
+.bem-saintek .marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee 30s linear infinite;
+}
+
+@keyframes marquee {
+    to { transform: translateX(-50%); }
+}
+
+.bem-saintek .dna-node {
+    position: absolute;
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    background: #03050a;
+    border: 1px solid rgba(34, 211, 238, 0.8);
+    box-shadow: 0 0 0 5px rgba(34, 211, 238, 0.04), 0 0 25px rgba(34, 211, 238, 0.3);
+    transition: 0.4s ease;
+    z-index: 3;
+    cursor: pointer;
+}
+
+.bem-saintek .dna-node:hover,
+.bem-saintek .dna-node.is-active {
+    transform: scale(1.5);
+    background: #22d3ee;
+    box-shadow: 0 0 0 8px rgba(34, 211, 238, 0.05), 0 0 40px rgba(34, 211, 238, 0.7);
+}
+
+.bem-saintek .constellation {
+    position: relative;
+    height: 650px;
+}
+
+@media (max-width: 700px) {
+    .bem-saintek .constellation { height: 520px; }
+}
+
+.bem-saintek .constellation-line {
+    position: absolute;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(34, 211, 238, 0.3), transparent);
+    transform-origin: left center;
+}
+
+.bem-saintek .constellation-node {
+    position: absolute;
+    width: 92px;
+    height: 92px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    z-index: 5;
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.4s, background 0.4s, box-shadow 0.4s;
+}
+
+.bem-saintek .constellation-node:hover,
+.bem-saintek .constellation-node.is-active {
+    transform: scale(1.16);
+    background: rgba(34, 211, 238, 0.08);
+    border-color: rgba(34, 211, 238, 0.8);
+    box-shadow: 0 0 0 12px rgba(34, 211, 238, 0.025), 0 0 50px rgba(34, 211, 238, 0.2);
+}
+
+.bem-saintek .node-center {
+    width: 145px;
+    height: 145px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.bem-saintek .node-center:hover {
+    transform: translate(-50%, -50%) scale(1.05);
+}
+
+.bem-saintek .progress-bar {
+    position: relative;
+    height: 5px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 99px;
+}
+
+.bem-saintek .progress-bar > span {
+    display: block;
+    height: 100%;
+    width: 0;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #22d3ee, #3b82f6);
+    box-shadow: 0 0 20px rgba(34, 211, 238, 0.4);
+    transition: width 1.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bem-saintek .archive-item {
+    transition: padding 0.5s ease, background 0.5s ease, border-color 0.5s ease;
+}
+
+.bem-saintek .archive-item:hover {
+    padding-left: 35px;
+    background: rgba(255, 255, 255, 0.025);
+    border-color: rgba(34, 211, 238, 0.15);
+}
+
+.bem-saintek .image-card {
+    overflow: hidden;
+}
+
+.bem-saintek .image-card img {
+    transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1), filter 1s ease;
+}
+
+.bem-saintek .image-card:hover img {
+    transform: scale(1.08);
+    filter: grayscale(0);
+}
+
+.bem-saintek .footer-big {
+    font-size: clamp(4rem, 13vw, 12rem);
+    line-height: 0.8;
+    letter-spacing: -0.09em;
+}
+
+/* ===== Dashboard dark (menyatu dengan gaya landing) ===== */
+.bem-saintek .dash-card {
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    background: rgba(255, 255, 255, 0.025);
+    backdrop-filter: blur(16px);
+}
+
+.bem-saintek .dash-input {
+    width: 100%;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+    color: #fff;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bem-saintek .dash-input::placeholder {
+    color: rgba(255, 255, 255, 0.25);
+}
+
+.bem-saintek .dash-input:focus {
+    border-color: rgba(103, 232, 249, 0.4);
+    box-shadow: 0 0 0 2px rgba(103, 232, 249, 0.18);
+}
+
+.bem-saintek select.dash-input option {
+    background-color: #0a0f1a;
+    color: #fff;
+}
+
+.bem-saintek .dash-label {
+    display: block;
+    margin-bottom: 0.375rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.bem-saintek .dash-error {
+    margin-top: 0.375rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: #fda4af;
+}
+
+.bem-saintek .dash-hint {
+    margin-top: 0.375rem;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.bem-saintek .dash-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.5rem;
+    border-radius: 0.75rem;
+    background: #fff;
+    color: #000;
+    font-size: 0.875rem;
+    font-weight: 700;
+    white-space: nowrap;
+    transition: background 0.2s ease;
+    cursor: pointer;
+    border: none;
+}
+
+.bem-saintek .dash-btn-primary:hover {
+    background: #67e8f9;
+}
+
+.bem-saintek .dash-btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.bem-saintek .dash-btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.625rem 1.5rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.875rem;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.bem-saintek .dash-btn-ghost:hover {
+    border-color: rgba(103, 232, 249, 0.3);
+    color: #fff;
+}
+
+.bem-saintek table.dash-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.bem-saintek .dash-table thead {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.bem-saintek .dash-table th {
+    padding: 0.75rem 1.5rem;
+    text-align: left;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.35);
+    white-space: nowrap;
+}
+
+.bem-saintek .dash-table th.center {
+    text-align: center;
+}
+
+.bem-saintek .dash-table tbody tr {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    transition: background 0.2s ease;
+}
+
+.bem-saintek .dash-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.bem-saintek .dash-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.bem-saintek .dash-table td {
+    padding: 1rem 1.5rem;
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.7);
+    vertical-align: middle;
+}
+
+.bem-saintek .dash-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.625rem;
+    border-radius: 9999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.bem-saintek .dash-alert-success {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(110, 231, 183, 0.25);
+    background: rgba(110, 231, 183, 0.07);
+    color: #6ee7b7;
+    font-size: 0.875rem;
+}
+
+.bem-saintek .dash-alert-error {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(253, 164, 175, 0.25);
+    background: rgba(253, 164, 175, 0.07);
+    color: #fda4af;
+    font-size: 0.875rem;
+}
+
+.bem-saintek .dash-page-btn {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.025);
+    color: rgba(255, 255, 255, 0.5);
+    transition: all 0.2s ease;
+}
+
+.bem-saintek .dash-page-btn:hover {
+    border-color: rgba(103, 232, 249, 0.3);
+    color: #fff;
+}
+
+.bem-saintek .dash-page-btn.active {
+    background: #67e8f9;
+    border-color: #67e8f9;
+    color: #000;
+    font-weight: 700;
+}
+
+.bem-saintek .dash-link-edit {
+    display: inline-block;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #67e8f9;
+    border-radius: 0.5rem;
+    transition: background 0.2s ease;
+}
+
+.bem-saintek .dash-link-edit:hover {
+    background: rgba(103, 232, 249, 0.1);
+}
+
+.bem-saintek .dash-link-delete {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #fda4af;
+    border-radius: 0.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.bem-saintek .dash-link-delete:hover {
+    background: rgba(253, 164, 175, 0.1);
+}
+
+.bem-saintek .dash-check {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 0.25rem;
+    accent-color: #22d3ee;
+    cursor: pointer;
+}
+
+.bem-saintek .dash-file {
+    width: 100%;
+    border-radius: 0.75rem;
+    border: 1px dashed rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.03);
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.6);
+    outline: none;
+}
+
+.bem-saintek .dash-file::file-selector-button {
+    margin-right: 1rem;
+    padding: 0.375rem 1rem;
+    border-radius: 0.5rem;
+    border: none;
+    background: #fff;
+    color: #000;
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.bem-saintek .dash-file::file-selector-button:hover {
+    background: #67e8f9;
+}
+
+/* ===== Overlay modal/pop-up: luar box form blur + transparan =====
+   (Aturan khusus karena background solid .bem-saintek akan
+   menimpa utility transparan bila dipakai di elemen yang sama.) */
+.bem-saintek.modal-overlay {
+    background: rgb(0 0 0 / 0.45);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}

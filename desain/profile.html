@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Mahasiswa - StudentHub</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#312e81'
+                        }
+                    },
+                    boxShadow: {
+                        soft: '0 10px 40px rgba(0,0,0,0.08)'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 transition-colors duration-300">
+
+    <!-- =========================
+         SIDEBAR
+    ========================== -->
+    <aside id="sidebar"
+        class="fixed left-0 top-0 z-40 h-screen w-72 -translate-x-full lg:translate-x-0
+        bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800
+        transition-transform duration-300">
+
+        <div class="flex h-full flex-col">
+
+            <!-- Logo -->
+            <div class="flex items-center gap-3 px-6 py-6 border-b border-slate-200 dark:border-slate-800">
+                <div class="flex h-11 w-11 items-center justify-center rounded-xl
+                    bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-lg">
+                    <i data-lucide="graduation-cap"></i>
+                </div>
+
+                <div>
+                    <h1 class="font-bold text-lg">StudentHub</h1>
+                    <p class="text-xs text-slate-500">Student Management</p>
+                </div>
+            </div>
+
+            <!-- Menu -->
+            <nav class="flex-1 px-4 py-6 space-y-2">
+
+                <p class="px-3 mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                    Menu Utama
+                </p>
+
+                <a href="#"
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500
+                    hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-indigo-600 transition">
+                    <i data-lucide="layout-dashboard" class="w-5"></i>
+                    Dashboard
+                </a>
+
+                <a href="#"
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl
+                    bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-semibold">
+                    <i data-lucide="user-round" class="w-5"></i>
+                    Profil Saya
+                </a>
+
+                <a href="#"
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500
+                    hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-indigo-600 transition">
+                    <i data-lucide="book-open" class="w-5"></i>
+                    Akademik
+                </a>
+
+                <a href="#"
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500
+                    hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-indigo-600 transition">
+                    <i data-lucide="calendar-days" class="w-5"></i>
+                    Jadwal Kuliah
+                </a>
+
+                <a href="#"
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500
+                    hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-indigo-600 transition">
+                    <i data-lucide="file-text" class="w-5"></i>
+                    KRS / KHS
+                </a>
+
+                <p class="px-3 pt-6 mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                    Pengaturan
+                </p>
+
+                <a href="#"
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500
+                    hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-indigo-600 transition">
+                    <i data-lucide="settings" class="w-5"></i>
+                    Pengaturan
+                </a>
+
+            </nav>
+
+            <!-- User mini profile -->
+            <div class="p-4 border-t border-slate-200 dark:border-slate-800">
+                <div class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800">
+                    <img
+                        src="https://i.pravatar.cc/100?img=12"
+                        class="w-10 h-10 rounded-full object-cover"
+                        alt="Profile">
+
+                    <div class="flex-1 min-w-0">
+                        <p class="font-semibold text-sm truncate">Ahmad Fauzan</p>
+                        <p class="text-xs text-slate-500 truncate">Mahasiswa</p>
+                    </div>
+
+                    <button class="text-slate-400 hover:text-red-500">
+                        <i data-lucide="log-out" class="w-4"></i>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </aside>
+
+
+    <!-- OVERLAY MOBILE -->
+    <div id="overlay"
+        class="fixed inset-0 z-30 hidden bg-black/50 lg:hidden">
+    </div>
+
+
+    <!-- =========================
+         MAIN CONTENT
+    ========================== -->
+    <main class="lg:ml-72 min-h-screen">
+
+        <!-- TOP NAVBAR -->
+        <header
+            class="sticky top-0 z-20 flex items-center justify-between
+            px-4 sm:px-6 lg:px-8 py-4
+            bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl
+            border-b border-slate-200 dark:border-slate-800">
+
+            <div class="flex items-center gap-4">
+
+                <button id="menuBtn"
+                    class="lg:hidden p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
+                    <i data-lucide="menu"></i>
+                </button>
+
+                <div>
+                    <h2 class="font-bold text-lg">Profil Mahasiswa</h2>
+                    <p class="text-xs text-slate-500">
+                        Informasi lengkap data mahasiswa
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="flex items-center gap-2">
+
+                <!-- Search -->
+                <button
+                    class="hidden sm:flex p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">
+                    <i data-lucide="search" class="w-5"></i>
+                </button>
+
+                <!-- Dark mode -->
+                <button id="themeBtn"
+                    class="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">
+                    <i id="themeIcon" data-lucide="moon" class="w-5"></i>
+                </button>
+
+                <!-- Notification -->
+                <button
+                    class="relative p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">
+                    <i data-lucide="bell" class="w-5"></i>
+
+                    <span class="absolute top-2 right-2 w-2 h-2
+                        bg-red-500 rounded-full border-2 border-white dark:border-slate-900">
+                    </span>
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <!-- CONTENT -->
+        <div class="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
+
+
+            <!-- BREADCRUMB -->
+            <div class="flex items-center gap-2 text-sm text-slate-500 mb-6">
+                <span>Dashboard</span>
+                <i data-lucide="chevron-right" class="w-4"></i>
+                <span class="text-indigo-600 font-medium">Profil Saya</span>
+            </div>
+
+
+            <!-- =========================
+                 HERO PROFILE
+            ========================== -->
+            <section
+                class="relative overflow-hidden rounded-3xl
+                bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500
+                text-white shadow-xl mb-6">
+
+                <!-- Decorative -->
+                <div class="absolute -right-20 -top-20 w-72 h-72 rounded-full bg-white/10"></div>
+                <div class="absolute -left-20 -bottom-32 w-80 h-80 rounded-full bg-white/10"></div>
+
+                <div class="relative p-6 sm:p-8">
+
+                    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+
+                        <div class="flex flex-col sm:flex-row items-center sm:items-start gap-5">
+
+                            <!-- Avatar -->
+                            <div class="relative">
+                                <img id="profileImage"
+                                    src="https://i.pravatar.cc/300?img=12"
+                                    class="w-28 h-28 rounded-3xl object-cover border-4 border-white/30 shadow-xl"
+                                    alt="Foto Mahasiswa">
+
+                                <span
+                                    class="absolute bottom-2 right-2 w-5 h-5
+                                    bg-emerald-400 border-4 border-white rounded-full">
+                                </span>
+                            </div>
+
+                            <div class="text-center sm:text-left">
+
+                                <div class="flex flex-wrap justify-center sm:justify-start items-center gap-2 mb-2">
+                                    <span class="px-3 py-1 rounded-full bg-white/20 text-xs font-medium">
+                                        Mahasiswa Aktif
+                                    </span>
+
+                                    <span class="px-3 py-1 rounded-full bg-emerald-400/20 text-xs font-medium text-emerald-100">
+                                        Online
+                                    </span>
+                                </div>
+
+                                <h1 id="profileName"
+                                    class="text-3xl sm:text-4xl font-bold mb-1">
+                                    Ahmad Fauzan
+                                </h1>
+
+                                <p class="text-white/80 mb-3">
+                                    2023123456 • Teknik Informatika
+                                </p>
+
+                                <div class="flex flex-wrap justify-center sm:justify-start gap-4 text-sm text-white/80">
+                                    <span class="flex items-center gap-1">
+                                        <i data-lucide="building-2" class="w-4"></i>
+                                        Fakultas Teknik
+                                    </span>
+
+                                    <span class="flex items-center gap-1">
+                                        <i data-lucide="calendar" class="w-4"></i>
+                                        Angkatan 2023
+                                    </span>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Edit Button -->
+                        <button id="editBtn"
+                            class="flex items-center justify-center gap-2
+                            px-5 py-3 rounded-xl
+                            bg-white text-indigo-600
+                            font-semibold hover:bg-indigo-50
+                            transition shadow-lg">
+
+                            <i data-lucide="pencil" class="w-4"></i>
+                            Edit Profil
+                        </button>
+
+                    </div>
+
+                </div>
+            </section>
+
+
+            <!-- =========================
+                 STATISTICS
+            ========================== -->
+            <section class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+
+                <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 shadow-soft border border-slate-100 dark:border-slate-800">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="p-2.5 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600">
+                            <i data-lucide="graduation-cap"></i>
+                        </div>
+
+                        <span class="text-xs font-semibold text-emerald-500">
+                            +2.4%
+                        </span>
+                    </div>
+
+                    <p class="text-2xl font-bold">3.82</p>
+                    <p class="text-sm text-slate-500">IPK Kumulatif</p>
+                </div>
+
+
+                <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 shadow-soft border border-slate-100 dark:border-slate-800">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="p-2.5 rounded-xl bg-purple-50 dark:bg-purple-500/10 text-purple-600">
+                            <i data-lucide="book-open"></i>
+                        </div>
+
+                        <span class="text-xs font-semibold text-slate-400">
+                            144
+                        </span>
+                    </div>
+
+                    <p class="text-2xl font-bold">98</p>
+                    <p class="text-sm text-slate-500">SKS Ditempuh</p>
+                </div>
+
+
+                <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 shadow-soft border border-slate-100 dark:border-slate-800">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600">
+                            <i data-lucide="award"></i>
+                        </div>
+
+                        <span class="text-xs font-semibold text-emerald-500">
+                            Baik
+                        </span>
+                    </div>
+
+                    <p class="text-2xl font-bold">18</p>
+                    <p class="text-sm text-slate-500">Prestasi</p>
+                </div>
+
+
+                <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 shadow-soft border border-slate-100 dark:border-slate-800">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="p-2.5 rounded-xl bg-orange-50 dark:bg-orange-500/10 text-orange-600">
+                            <i data-lucide="calendar-check"></i>
+                        </div>
+
+                        <span class="text-xs font-semibold text-orange-500">
+                            Aktif
+                        </span>
+                    </div>
+
+                    <p class="text-2xl font-bold">6</p>
+                    <p class="text-sm text-slate-500">Semester</p>
+                </div>
+
+            </section>
+
+
+            <!-- =========================
+                 MAIN GRID
+            ========================== -->
+            <section class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+
+                <!-- LEFT -->
+                <div class="xl:col-span-2 space-y-6">
+
+
+                    <!-- IDENTITAS -->
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-soft
+                        border border-slate-100 dark:border-slate-800 overflow-hidden">
+
+                        <div class="flex items-center justify-between px-6 py-5
+                            border-b border-slate-100 dark:border-slate-800">
+
+                            <div>
+                                <h3 class="font-bold text-lg">Identitas Mahasiswa</h3>
+                                <p class="text-sm text-slate-500 mt-1">
+                                    Informasi identitas pribadi mahasiswa
+                                </p>
+                            </div>
+
+                            <div class="p-2.5 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600">
+                                <i data-lucide="contact" class="w-5"></i>
+                            </div>
+
+                        </div>
+
+
+                        <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+
+                            <div>
+                                <p class="text-xs text-slate-400 uppercase tracking-wide mb-1">
+                                    Nama Lengkap
+                                </p>
+                                <p class="font-semibold">Ahmad Fauzan</p>
+                            </div>
+
+                            <div>
+                                <p class="text-xs text-slate-400 uppercase tracking-wide mb-1">
+                                    NIM
+                                </p>
+                                <p class="font-semibold">2023123456</p>
+                            </div>
+
+                            <div>
+                                <p class="text-xs text-slate-400 uppercase tracking-wide mb-1">
+                                    NIK
+                                </p>
+                                <p class="font-semibold">3510********1234</p>
+                            </div>
+
+                            <div>
+                                <p class="text-xs text-slate-400 uppercase tracking-wide mb-1">
+                                    NISN
+                                </p>
+                                <p class="font-semibold">0056789123</p>
+                            </div>
+
+                            <div>
+                                <p class="text-xs text-slate-400 uppercase tracking-wide mb-1">
+                                    Tempat, Tanggal Lahir
+                                </p>
+                                <p class="font-semibold">Bondowoso, 15 Mei 2004</p>
+                            </div>
+
+                            <div>
+                                <p class="text-xs text-slate-400 uppercase tracking-wide mb-1">
+                                    Jenis Kelamin
+                                </p>
+                                <p class="font-semibold">Laki-laki</p>
+                            </div>
+
+                            <div>
+                                <p class="text-xs text-slate-400 uppercase tracking-wide mb-1">
+                                    Agama
+                                </p>
+                                <p class="font-semibold">Islam</p>
+                            </div>
+
+                            <div>
+                                <p class="text-xs text-slate-400 uppercase tracking-wide mb-1">
+                                    Status Pernikahan
+                                </p>
+                                <p class="font-semibold">Belum Menikah</p>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- AKADEMIK -->
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-soft
+                        border border-slate-100 dark:border-slate-800 overflow-hidden">
+
+                        <div class="flex items-center justify-between px-6 py-5
+                            border-b border-slate-100 dark:border-slate-800">
+
+                            <div>
+                                <h3 class="font-bold text-lg">Informasi Akademik</h3>
+                                <p class="text-sm text-slate-500 mt-1">
+                                    Data akademik dan perkuliahan
+                                </p>
+                            </div>
+
+                            <div class="p-2.5 rounded-xl bg-purple-50 dark:bg-purple-500/10 text-purple-600">
+                                <i data-lucide="graduation-cap" class="w-5"></i>
+                            </div>
+
+                        </div>
+
+
+                        <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+
+                            <div>
+                                <p class="text-xs text-slate-400 uppercase tracking-wide mb-1">
+                                    Fakultas
+                                </p>
+                                <p class="font-semibold">Fakultas Teknik</p>
+                            </div>
+
+                            <div>
+                                <p class="text-xs text-slate-400 uppercase tracking-wide mb-1">
+                                    Program Studi
+                                </p>
+                                <p class="font-semibold">Teknik Informatika</p>
+                            </div>
+
+                            <div>
+                                <p class="text-xs text-slate-400 uppercase tracking-wide mb-1">
+                                    Jenjang
+                                </p>
+                                <p class="font-semibold">S1</p>
+                            </div>
+
+                            <div>
+                                <p class="text-xs text-slate-400 uppercase tracking-wide mb-1">
+                                    Angkatan
+                                </p>
+                                <p class="font-semibold">2023</p>
+                            </div>
+
+                            <div>
+                                <p class="text-xs text-slate-400 uppercase tracking-wide mb-1">
+                                    Semester
+                                </p>
+                                <p class="font-semibold">6 (Enam)</p>
+                            </div>
+
+                            <div>
+                                <p class="text-xs text-slate-400 uppercase tracking-wide mb-1">
+                                    Dosen Wali
+                                </p>
+                                <p class="font-semibold">Dr. Budi Santoso, M.Kom.</p>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ALAMAT -->
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-soft
+                        border border-slate-100 dark:border-slate-800 overflow-hidden">
+
+                        <div class="flex items-center justify-between px-6 py-5
+                            border-b border-slate-100 dark:border-slate-800">
+
+                            <div>
+                                <h3 class="font-bold text-lg">Alamat</h3>
+                                <p class="text-sm text-slate-500 mt-1">
+                                    Informasi tempat tinggal mahasiswa
+                                </p>
+                            </div>
+
+                            <div class="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600">
+                                <i data-lucide="map-pin" class="w-5"></i>
+                            </div>
+
+                        </div>
+
+                        <div class="p-6">
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                                <div>
+                                    <p class="text-xs text-slate-400 uppercase tracking-wide mb-1">
+                                        Alamat Lengkap
+                                    </p>
+
+                                    <p class="font-semibold leading-relaxed">
+                                        Jl. Raya Bondowoso No. 123,
+                                        Kelurahan Dabasah,
+                                        Kecamatan Bondowoso,
+                                        Kabupaten Bondowoso
+                                    </p>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-4">
+
+                                    <div>
+                                        <p class="text-xs text-slate-400 uppercase tracking-wide mb-1">
+                                            Provinsi
+                                        </p>
+                                        <p class="font-semibold">Jawa Timur</p>
+                                    </div>
+
+                                    <div>
+                                        <p class="text-xs text-slate-400 uppercase tracking-wide mb-1">
+                                            Kode Pos
+                                        </p>
+                                        <p class="font-semibold">68211</p>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- RIGHT -->
+                <div class="space-y-6">
+
+
+                    <!-- KONTAK -->
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-soft
+                        border border-slate-100 dark:border-slate-800 overflow-hidden">
+
+                        <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-800">
+                            <h3 class="font-bold text-lg">Kontak</h3>
+                            <p class="text-sm text-slate-500 mt-1">
+                                Informasi kontak mahasiswa
+                            </p>
+                        </div>
+
+                        <div class="p-6 space-y-5">
+
+                            <div class="flex items-start gap-4">
+
+                                <div class="p-3 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600">
+                                    <i data-lucide="mail" class="w-5"></i>
+                                </div>
+
+                                <div class="min-w-0">
+                                    <p class="text-xs text-slate-400 mb-1">Email</p>
+                                    <p class="font-semibold truncate">
+                                        ahmad.fauzan@email.com
+                                    </p>
+                                </div>
+
+                            </div>
+
+
+                            <div class="flex items-start gap-4">
+
+                                <div class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600">
+                                    <i data-lucide="phone" class="w-5"></i>
+                                </div>
+
+                                <div>
+                                    <p class="text-xs text-slate-400 mb-1">No. Handphone</p>
+                                    <p class="font-semibold">
+                                        +62 812-3456-7890
+                                    </p>
+                                </div>
+
+                            </div>
+
+
+                            <div class="flex items-start gap-4">
+
+                                <div class="p-3 rounded-xl bg-purple-50 dark:bg-purple-500/10 text-purple-600">
+                                    <i data-lucide="message-circle" class="w-5"></i>
+                                </div>
+
+                                <div>
+                                    <p class="text-xs text-slate-400 mb-1">WhatsApp</p>
+                                    <p class="font-semibold">
+                                        +62 812-3456-7890
+                                    </p>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PROGRESS AKADEMIK -->
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-soft
+                        border border-slate-100 dark:border-slate-800 overflow-hidden">
+
+                        <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-800">
+                            <h3 class="font-bold text-lg">Progress Akademik</h3>
+                            <p class="text-sm text-slate-500 mt-1">
+                                Perkembangan studi mahasiswa
+                            </p>
+                        </div>
+
+                        <div class="p-6">
+
+                            <div class="flex items-end justify-between mb-3">
+                                <div>
+                                    <p class="text-3xl font-bold text-indigo-600">
+                                        68%
+                                    </p>
+                                    <p class="text-xs text-slate-500">
+                                        Progress kelulusan
+                                    </p>
+                                </div>
+
+                                <i data-lucide="trending-up"
+                                    class="text-emerald-500 w-6">
+                                </i>
+                            </div>
+
+                            <div class="h-3 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+
+                                <div
+                                    class="h-full w-[68%] rounded-full
+                                    bg-gradient-to-r from-indigo-500 to-purple-500
+                                    transition-all duration-1000">
+                                </div>
+
+                            </div>
+
+                            <div class="flex justify-between mt-3 text-xs text-slate-500">
+                                <span>98 SKS</span>
+                                <span>144 SKS</span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ORANG TUA -->
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-soft
+                        border border-slate-100 dark:border-slate-800 overflow-hidden">
+
+                        <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-800">
+                            <h3 class="font-bold text-lg">Data Keluarga</h3>
+                            <p class="text-sm text-slate-500 mt-1">
+                                Informasi orang tua / wali
+                            </p>
+                        </div>
+
+                        <div class="p-6 space-y-5">
+
+                            <div class="flex items-center gap-4">
+
+                                <div class="w-11 h-11 rounded-full bg-indigo-100 dark:bg-indigo-500/10
+                                    flex items-center justify-center text-indigo-600">
+                                    <i data-lucide="user"></i>
+                                </div>
+
+                                <div>
+                                    <p class="text-xs text-slate-400">
+                                        Ayah
+                                    </p>
+                                    <p class="font-semibold">
+                                        Bapak H. Abdul Rahman
+                                    </p>
+                                </div>
+
+                            </div>
+
+
+                            <div class="flex items-center gap-4">
+
+                                <div class="w-11 h-11 rounded-full bg-pink-100 dark:bg-pink-500/10
+                                    flex items-center justify-center text-pink-600">
+                                    <i data-lucide="user"></i>
+                                </div>
+
+                                <div>
+                                    <p class="text-xs text-slate-400">
+                                        Ibu
+                                    </p>
+                                    <p class="font-semibold">
+                                        Ibu Siti Aminah
+                                    </p>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- SOCIAL -->
+                    <div class="bg-gradient-to-br from-slate-900 to-slate-800
+                        dark:from-slate-800 dark:to-slate-900
+                        rounded-2xl p-6 text-white">
+
+                        <h3 class="font-bold mb-2">
+                            Temukan Saya
+                        </h3>
+
+                        <p class="text-sm text-slate-400 mb-5">
+                            Terhubung melalui media sosial.
+                        </p>
+
+                        <div class="flex gap-3">
+
+                            <a href="#"
+                                class="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20
+                                flex items-center justify-center transition">
+                                <i data-lucide="instagram" class="w-5"></i>
+                            </a>
+
+                            <a href="#"
+                                class="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20
+                                flex items-center justify-center transition">
+                                <i data-lucide="linkedin" class="w-5"></i>
+                            </a>
+
+                            <a href="#"
+                                class="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20
+                                flex items-center justify-center transition">
+                                <i data-lucide="github" class="w-5"></i>
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- FOOTER -->
+            <footer class="text-center py-8 text-sm text-slate-400">
+                © 2026 StudentHub. Sistem Informasi Mahasiswa.
+            </footer>
+
+        </div>
+
+    </main>
+
+
+    <!-- =========================
+         MODAL EDIT PROFILE
+    ========================== -->
+    <div id="editModal"
+        class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+
+        <!-- Backdrop -->
+        <div id="modalBackdrop"
+            class="absolute inset-0 bg-black/60 backdrop-blur-sm">
+        </div>
+
+        <!-- Modal -->
+        <div
+            class="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto
+            bg-white dark:bg-slate-900 rounded-3xl shadow-2xl">
+
+            <!-- Header -->
+            <div class="sticky top-0 z-10 flex items-center justify-between
+                px-6 py-5 bg-white dark:bg-slate-900
+                border-b border-slate-200 dark:border-slate-800">
+
+                <div>
+                    <h3 class="text-xl font-bold">
+                        Edit Profil
+                    </h3>
+
+                    <p class="text-sm text-slate-500">
+                        Perbarui informasi profil Anda
+                    </p>
+                </div>
+
+                <button id="closeModal"
+                    class="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">
+                    <i data-lucide="x"></i>
+                </button>
+
+            </div>
+
+
+            <!-- Form -->
+            <form id="profileForm" class="p-6 space-y-6">
+
+                <!-- Profile picture -->
+                <div class="flex items-center gap-5">
+
+                    <img
+                        src="https://i.pravatar.cc/300?img=12"
+                        class="w-20 h-20 rounded-2xl object-cover"
+                        alt="Profile">
+
+                    <div>
+                        <button type="button"
+                            class="px-4 py-2 rounded-xl border border-slate-200
+                            dark:border-slate-700 text-sm font-medium
+                            hover:bg-slate-50 dark:hover:bg-slate-800">
+                            Ganti Foto
+                        </button>
+
+                        <p class="text-xs text-slate-400 mt-2">
+                            JPG, PNG maksimal 2MB
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                    <div>
+                        <label class="block text-sm font-medium mb-2">
+                            Nama Lengkap
+                        </label>
+
+                        <input
+                            id="nameInput"
+                            type="text"
+                            value="Ahmad Fauzan"
+                            class="w-full px-4 py-3 rounded-xl
+                            border border-slate-200 dark:border-slate-700
+                            bg-white dark:bg-slate-800
+                            outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+
+
+                    <div>
+                        <label class="block text-sm font-medium mb-2">
+                            NIM
+                        </label>
+
+                        <input
+                            type="text"
+                            value="2023123456"
+                            disabled
+                            class="w-full px-4 py-3 rounded-xl
+                            border border-slate-200 dark:border-slate-700
+                            bg-slate-100 dark:bg-slate-800/50
+                            text-slate-500">
+                    </div>
+
+
+                    <div>
+                        <label class="block text-sm font-medium mb-2">
+                            Email
+                        </label>
+
+                        <input
+                            type="email"
+                            value="ahmad.fauzan@email.com"
+                            class="w-full px-4 py-3 rounded-xl
+                            border border-slate-200 dark:border-slate-700
+                            bg-white dark:bg-slate-800
+                            outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+
+
+                    <div>
+                        <label class="block text-sm font-medium mb-2">
+                            No. Handphone
+                        </label>
+
+                        <input
+                            type="text"
+                            value="+62 812-3456-7890"
+                            class="w-full px-4 py-3 rounded-xl
+                            border border-slate-200 dark:border-slate-700
+                            bg-white dark:bg-slate-800
+                            outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+
+
+                    <div>
+                        <label class="block text-sm font-medium mb-2">
+                            Tempat Lahir
+                        </label>
+
+                        <input
+                            type="text"
+                            value="Bondowoso"
+                            class="w-full px-4 py-3 rounded-xl
+                            border border-slate-200 dark:border-slate-700
+                            bg-white dark:bg-slate-800
+                            outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+
+
+                    <div>
+                        <label class="block text-sm font-medium mb-2">
+                            Tanggal Lahir
+                        </label>
+
+                        <input
+                            type="date"
+                            value="2004-05-15"
+                            class="w-full px-4 py-3 rounded-xl
+                            border border-slate-200 dark:border-slate-700
+                            bg-white dark:bg-slate-800
+                            outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+
+                </div>
+
+
+                <div>
+                    <label class="block text-sm font-medium mb-2">
+                        Alamat Lengkap
+                    </label>
+
+                    <textarea
+                        rows="4"
+                        class="w-full px-4 py-3 rounded-xl
+                        border border-slate-200 dark:border-slate-700
+                        bg-white dark:bg-slate-800
+                        outline-none focus:ring-2 focus:ring-indigo-500">Jl. Raya Bondowoso No. 123, Kelurahan Dabasah, Kecamatan Bondowoso, Kabupaten Bondowoso</textarea>
+                </div>
+
+
+                <!-- Buttons -->
+                <div class="flex justify-end gap-3 pt-3">
+
+                    <button
+                        type="button"
+                        id="cancelBtn"
+                        class="px-5 py-3 rounded-xl border
+                        border-slate-200 dark:border-slate-700
+                        font-medium hover:bg-slate-50 dark:hover:bg-slate-800">
+                        Batal
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="px-5 py-3 rounded-xl
+                        bg-indigo-600 hover:bg-indigo-700
+                        text-white font-semibold
+                        flex items-center gap-2">
+
+                        <i data-lucide="save" class="w-4"></i>
+                        Simpan Perubahan
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         TOAST
+    ========================== -->
+    <div id="toast"
+        class="fixed right-5 bottom-5 z-[60]
+        translate-y-20 opacity-0 pointer-events-none
+        transition-all duration-300">
+
+        <div class="flex items-center gap-3
+            px-5 py-4 rounded-2xl
+            bg-slate-900 dark:bg-white
+            text-white dark:text-slate-900
+            shadow-2xl">
+
+            <div class="w-8 h-8 rounded-full bg-emerald-500
+                flex items-center justify-center text-white">
+                <i data-lucide="check" class="w-4"></i>
+            </div>
+
+            <div>
+                <p class="font-semibold text-sm">
+                    Berhasil!
+                </p>
+
+                <p class="text-xs opacity-70">
+                    Profil berhasil diperbarui.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================== -->
+    <script>
+
+        // Initialize icons
+        lucide.createIcons();
+
+
+        // =========================
+        // SIDEBAR MOBILE
+        // =========================
+
+        const sidebar = document.getElementById("sidebar");
+        const menuBtn = document.getElementById("menuBtn");
+        const overlay = document.getElementById("overlay");
+
+        menuBtn.addEventListener("click", () => {
+            sidebar.classList.remove("-translate-x-full");
+            overlay.classList.remove("hidden");
+        });
+
+        overlay.addEventListener("click", () => {
+            sidebar.classList.add("-translate-x-full");
+            overlay.classList.add("hidden");
+        });
+
+
+        // =========================
+        // DARK MODE
+        // =========================
+
+        const themeBtn = document.getElementById("themeBtn");
+
+        themeBtn.addEventListener("click", () => {
+
+            document.documentElement.classList.toggle("dark");
+
+            const isDark =
+                document.documentElement.classList.contains("dark");
+
+            localStorage.setItem("theme", isDark ? "dark" : "light");
+
+        });
+
+
+        // Load theme
+        if (localStorage.getItem("theme") === "dark") {
+            document.documentElement.classList.add("dark");
+        }
+
+
+        // =========================
+        // MODAL
+        // =========================
+
+        const editBtn = document.getElementById("editBtn");
+        const editModal = document.getElementById("editModal");
+        const closeModal = document.getElementById("closeModal");
+        const cancelBtn = document.getElementById("cancelBtn");
+        const modalBackdrop = document.getElementById("modalBackdrop");
+
+
+        function openModal() {
+
+            editModal.classList.remove("hidden");
+            editModal.classList.add("flex");
+
+            document.body.style.overflow = "hidden";
+
+        }
+
+
+        function closeEditModal() {
+
+            editModal.classList.add("hidden");
+            editModal.classList.remove("flex");
+
+            document.body.style.overflow = "";
+
+        }
+
+
+        editBtn.addEventListener("click", openModal);
+        closeModal.addEventListener("click", closeEditModal);
+        cancelBtn.addEventListener("click", closeEditModal);
+        modalBackdrop.addEventListener("click", closeEditModal);
+
+
+        // ESC close modal
+        document.addEventListener("keydown", (event) => {
+
+            if (event.key === "Escape") {
+                closeEditModal();
+            }
+
+        });
+
+
+        // =========================
+        // FORM SUBMIT
+        // =========================
+
+        const profileForm = document.getElementById("profileForm");
+        const profileName = document.getElementById("profileName");
+        const nameInput = document.getElementById("nameInput");
+
+        profileForm.addEventListener("submit", (event) => {
+
+            event.preventDefault();
+
+            // Update name
+            if (nameInput.value.trim() !== "") {
+                profileName.textContent = nameInput.value;
+            }
+
+            closeEditModal();
+
+            showToast();
+
+        });
+
+
+        // =========================
+        // TOAST
+        // =========================
+
+        const toast = document.getElementById("toast");
+
+        function showToast() {
+
+            toast.classList.remove(
+                "translate-y-20",
+                "opacity-0"
+            );
+
+            toast.classList.add(
+                "translate-y-0",
+                "opacity-100"
+            );
+
+            setTimeout(() => {
+
+                toast.classList.remove(
+                    "translate-y-0",
+                    "opacity-100"
+                );
+
+                toast.classList.add(
+                    "translate-y-20",
+                    "opacity-0"
+                );
+
+            }, 3000);
+
+        }
+
+
+        // =========================
+        // ANIMASI SAAT LOAD
+        // =========================
+
+        document.addEventListener("DOMContentLoaded", () => {
+
+            const cards = document.querySelectorAll(
+                "section > div, section > article"
+            );
+
+            cards.forEach((card, index) => {
+
+                card.style.opacity = "0";
+                card.style.transform = "translateY(15px)";
+
+                setTimeout(() => {
+
+                    card.style.transition =
+                        "all 0.5s ease";
+
+                    card.style.opacity = "1";
+                    card.style.transform = "translateY(0)";
+
+                }, index * 70);
+
+            });
+
+        });
+
+    </script>
+
+</body>
+</html>
