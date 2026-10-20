@@ -143,6 +143,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/kegiatan/create', [KegiatanController::class, 'create'])->name('kegiatan.create');
         Route::post('/kegiatan', [KegiatanController::class, 'store'])->name('kegiatan.store');
         Route::get('/absensi/rekap', [KegiatanController::class, 'rekap'])->name('absensi.rekap');
+        Route::get('/absensi/rekap/export', [KegiatanController::class, 'rekapExport'])->name('absensi.rekap.export');
+        Route::get('/absensi/rekap/{user}', [KegiatanController::class, 'rekapDetail'])->name('absensi.rekap.show');
         Route::get('/kegiatan/{kegiatan}', [KegiatanController::class, 'show'])->name('kegiatan.show');
         Route::get('/kegiatan/{kegiatan}/edit', [KegiatanController::class, 'edit'])->name('kegiatan.edit');
         Route::match(['put', 'patch'], '/kegiatan/{kegiatan}', [KegiatanController::class, 'update'])->name('kegiatan.update');

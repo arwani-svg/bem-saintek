@@ -49,10 +49,6 @@ const toggleCollapse = () => {
     } catch (e) {}
 }
 
-const logout = () => {
-    router.post('/logout')
-}
-
 const MENU_META = {
     dashboard: { label: 'Dashboard', href: '/dashboard' },
     profil: { label: 'Profil Saya', href: '/profil' },
@@ -182,18 +178,32 @@ const goBack = () => {
                             </slot>
                         </div>
                     </div>
-                    <div v-if="user" class="flex shrink-0 items-center gap-3">
-                        <div class="hidden text-right sm:block">
-                            <p class="text-sm font-semibold text-white">{{ user.name }}</p>
-                            <p class="font-mono text-[10px] uppercase tracking-widest text-white/30">{{ user.role }}</p>
-                        </div>
-                        <button
-                            @click="logout"
-                            class="cursor-pointer rounded-xl border border-rose-300/20 bg-rose-300/5 px-4 py-2 text-sm font-semibold text-rose-300 transition hover:border-rose-300/40 hover:bg-rose-300/10 active:scale-95"
+                    <Link
+                        v-if="user"
+                        href="/profil"
+                        class="group flex shrink-0 items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] py-1.5 pl-1.5 pr-3 transition hover:border-cyan-300/30 hover:bg-cyan-300/5"
+                        title="Lihat profil saya"
+                    >
+                        <img
+                            v-if="user.foto_url"
+                            :src="user.foto_url"
+                            :alt="user.name"
+                            class="h-9 w-9 rounded-xl border border-white/20 object-cover"
+                        />
+                        <span
+                            v-else
+                            class="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-violet-500 text-sm font-bold text-black"
                         >
-                            Keluar
-                        </button>
-                    </div>
+                            {{ (user.name || '?').charAt(0).toUpperCase() }}
+                        </span>
+                        <span class="hidden text-left sm:block">
+                            <span class="block max-w-[160px] truncate text-sm font-semibold leading-tight text-white group-hover:text-cyan-200">{{ user.name }}</span>
+                            <span class="block font-mono text-[10px] uppercase leading-tight tracking-widest text-white/30">{{ user.role }}</span>
+                        </span>
+                        <svg class="hidden h-4 w-4 text-white/30 transition group-hover:translate-x-0.5 group-hover:text-cyan-300 sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </Link>
                 </div>
             </header>
 

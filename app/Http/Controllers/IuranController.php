@@ -75,7 +75,7 @@ class IuranController extends Controller
     /** Endpoint JSON untuk picker peserta: ?search=&prodi=&role=&limit=20 */
     public function cariUser(Request $request)
     {
-        $query = User::query()->select(['id', 'name', 'nim', 'prodi', 'role', 'status']);
+        $query = User::query()->select(['id', 'name', 'nim', 'foto', 'prodi', 'role', 'status']);
 
         if ($search = $request->input('search', '')) {
             $query->where(function ($q) use ($search) {
@@ -140,7 +140,7 @@ class IuranController extends Controller
     /** Detail iuran: siapa sudah/belum + sisa per orang (mendukung cicilan). */
     public function show(Request $request, Iuran $iuran)
     {
-        $pesertaQuery = $iuran->pesertas()->with(['user:id,name,nim,prodi,role', 'pembayarans' => fn ($q) => $q->latest()]);
+        $pesertaQuery = $iuran->pesertas()->with(['user:id,name,nim,foto,prodi,role', 'pembayarans' => fn ($q) => $q->latest()]);
 
         if ($search = $request->input('search', '')) {
             $pesertaQuery->whereHas('user', fn ($q) => $q->where('name', 'like', "%{$search}%")->orWhere('nim', 'like', "%{$search}%"));

@@ -308,10 +308,10 @@ onUnmounted(() => {
                 </div>
 
                 <a
-                    href="#join"
+                    href="/login"
                     class="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-full bg-white text-black text-xs font-bold hover:bg-cyan-300 transition"
                 >
-                    Join Movement
+                    Login
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M7 7h10v10" />
                     </svg>

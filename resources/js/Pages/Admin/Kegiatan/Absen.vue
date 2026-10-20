@@ -72,7 +72,7 @@ async function tandai(pesertaId, status) {
         const data = await res.json()
         Object.assign(stats, data.ringkasan)
         const jam = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
-        recent.value.unshift({ nama: data.nama, status, jam })
+        recent.value.unshift({ nama: data.nama, foto_url: data.foto_url || hasil.value[idx]?.user?.foto_url || null, status, jam })
         recent.value = recent.value.slice(0, 10)
         query.value = ''
         fetchSaran() // segarkan antrian sisa
@@ -194,7 +194,14 @@ const progress = computed(() => {
                             :class="i === highlight ? 'border-emerald-300/60 bg-emerald-300/[0.07] shadow-[0_0_24px_rgba(52,211,153,0.12)]' : 'border-white/5 bg-white/[0.02]'"
                             class="flex items-center gap-3 rounded-xl border px-4 py-3 transition-all"
                         >
-                            <span :class="i === highlight ? 'bg-emerald-300 text-black' : 'bg-white/10 text-white/40'" class="flex h-6 w-6 shrink-0 items-center justify-center rounded-md font-mono text-xs font-bold">{{ i + 1 }}</span>
+                            <img
+                                v-if="p.user?.foto_url"
+                                :src="p.user.foto_url"
+                                :alt="p.user?.name"
+                                class="h-11 w-11 shrink-0 rounded-xl border border-white/20 object-cover"
+                                loading="lazy"
+                            />
+                            <span v-else :class="i === highlight ? 'bg-emerald-300 text-black' : 'bg-white/10 text-white/40'" class="flex h-6 w-6 shrink-0 items-center justify-center rounded-md font-mono text-xs font-bold">{{ i + 1 }}</span>
                             <div class="min-w-0 flex-1">
                                 <p class="truncate font-semibold text-white">{{ p.user?.name }} <span class="font-mono text-[11px] font-normal text-white/35">{{ p.user?.nim }}</span></p>
                                 <p class="font-mono text-[11px] text-white/35">{{ p.user?.prodi }} · <span :class="warnaStatus[p.status] || 'text-white/35'">{{ p.status ? labelStatus[p.status] : 'BELUM' }}</span></p>
@@ -220,6 +227,19 @@ const progress = computed(() => {
                     <p class="font-mono text-[10px] tracking-[.3em] text-cyan-300">BARU DITANDAI</p>
                     <div class="mt-3 space-y-1.5">
                         <div v-for="(r, i) in recent" :key="i" class="flex items-center gap-2 rounded-lg bg-white/[0.03] px-3 py-2 text-xs">
+                            <img
+                                v-if="r.foto_url"
+                                :src="r.foto_url"
+                                :alt="r.nama"
+                                class="h-7 w-7 shrink-0 rounded-full border border-white/20 object-cover"
+                                loading="lazy"
+                            />
+                            <span
+                                v-else
+                                class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 to-violet-500 text-[11px] font-bold text-black"
+                            >
+                                {{ (r.nama || '?').charAt(0).toUpperCase() }}
+                            </span>
                             <span class="min-w-0 flex-1 truncate font-semibold text-white">{{ r.nama }}</span>
                             <span :class="['font-mono font-bold', warnaStatus[r.status]]">{{ labelStatus[r.status] }}</span>
                             <span class="font-mono text-white/30">{{ r.jam }}</span>

@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue'
-import { Link, usePage } from '@inertiajs/vue3'
+import { Link, router, usePage } from '@inertiajs/vue3'
 
 const props = defineProps({
     activeMenu: {
@@ -22,6 +22,10 @@ const props = defineProps({
 })
 
 defineEmits(['close'])
+
+const logout = () => {
+    router.post('/logout')
+}
 
 // Role dari Spatie (shared `auth`) + fallback kolom legacy `user.role`.
 // Jabatan baru (ketua-bem, bendahara, ...) otomatis dianggap pengurus di menu.
@@ -358,18 +362,39 @@ const toggleDropdown = (menu) => {
                     Lihat Website
                 </span>
             </a>
-            <div
+            <Link
                 v-if="user"
+                href="/profil"
+                @click="$emit('close')"
                 :class="collapsed ? 'lg:justify-center lg:px-2' : ''"
-                class="group relative flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.02] px-4 py-3"
+                class="group relative flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.02] px-4 py-3 transition hover:border-cyan-300/25 hover:bg-cyan-300/5"
+                title="Lihat profil saya"
             >
-                <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 to-violet-500 text-sm font-bold text-black">
+                <img
+                    v-if="user.foto_url"
+                    :src="user.foto_url"
+                    :alt="user.name"
+                    class="h-9 w-9 shrink-0 rounded-full border border-white/20 object-cover"
+                />
+                <div
+                    v-else
+                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 to-violet-500 text-sm font-bold text-black"
+                >
                     {{ (user.name || '?').charAt(0).toUpperCase() }}
                 </div>
-                <div :class="collapsed ? 'lg:hidden' : ''" class="min-w-0">
+                <div :class="collapsed ? 'lg:hidden' : ''" class="min-w-0 flex-1">
                     <p class="truncate text-sm font-semibold text-white">{{ user.name }}</p>
                     <p class="font-mono text-[10px] uppercase tracking-widest text-cyan-300/70">{{ user.role }}</p>
                 </div>
+                <svg
+                    :class="collapsed ? 'lg:hidden' : ''"
+                    class="h-4 w-4 shrink-0 text-white/20 transition group-hover:translate-x-0.5 group-hover:text-cyan-300"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
                 <span
                     v-if="collapsed"
                     class="pointer-events-none absolute left-full z-[60] ml-3 hidden whitespace-nowrap rounded-lg border border-white/10 bg-[#0a0f1a] px-3 py-1.5 text-xs font-semibold text-white opacity-0 shadow-xl transition-all duration-200 group-hover:opacity-100 lg:group-hover:block"
@@ -377,7 +402,23 @@ const toggleDropdown = (menu) => {
                     {{ user.name }}
                     <span class="block font-mono text-[10px] font-normal uppercase tracking-widest text-cyan-300/70">{{ user.role }}</span>
                 </span>
-            </div>
+            </Link>
+            <button
+                @click="logout"
+                :class="collapsed ? 'lg:justify-center lg:px-0' : ''"
+                class="group relative flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-rose-300/20 bg-rose-300/5 px-4 py-2.5 text-sm font-semibold text-rose-300 transition hover:border-rose-300/40 hover:bg-rose-300/10 active:scale-[0.98]"
+            >
+                <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                <span :class="collapsed ? 'lg:hidden' : ''">Keluar</span>
+                <span
+                    v-if="collapsed"
+                    class="pointer-events-none absolute left-full z-[60] ml-3 hidden whitespace-nowrap rounded-lg border border-white/10 bg-[#0a0f1a] px-3 py-1.5 text-xs font-semibold text-white opacity-0 shadow-xl transition-all duration-200 group-hover:opacity-100 lg:group-hover:block"
+                >
+                    Keluar
+                </span>
+            </button>
         </div>
     </aside>
 </template>

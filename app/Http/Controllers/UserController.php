@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ActivityLog;
 use App\Models\User;
+use App\Services\FotoProfil;
 use App\Services\ProfilRiwayat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -38,12 +39,31 @@ class UserController extends Controller
             $query->where('status', $status);
         }
 
+        if ($request->filled('prodi')) {
+            $query->where('prodi', $request->input('prodi'));
+        }
+
+        if ($request->filled('semester')) {
+            // Semester berjalan dihitung dari angkatan — petakan ke angkatan.
+            $angkatan = User::angkatanUntukSemester((int) $request->input('semester'));
+            if (is_null($angkatan)) {
+                // Tidak ada angkatan yang cocok periode ini (mis. semester
+                // genap di periode ganjil) — paksa hasil kosong.
+                $query->whereRaw('0 = 1');
+            } else {
+                $query->where('angkatan', $angkatan);
+            }
+        }
+
         $users = $query->latest()->paginate(10)->withQueryString();
 
         return Inertia::render('Admin/Users/Index', [
             'users' => $users,
-            'filters' => $request->only(['search', 'role', 'status']),
+            'filters' => $request->only(['search', 'role', 'status', 'prodi', 'semester']),
             'rolesList' => Role::orderBy('name')->pluck('name'),
+            'prodiList' => User::PRODI,
+            'semesterList' => User::SEMESTER_LIST,
+            'statusList' => User::STATUS,
             'user' => Auth::user(),
         ]);
     }
@@ -66,6 +86,9 @@ class UserController extends Controller
         $validated['password'] = Hash::make($validated['password']);
         $validated['privasi'] = $validated['privasi'] ?? false;
         $validated['prestasi'] = User::normalizePrestasi($validated['prestasi'] ?? null);
+        // Foto profil: nullable, max 1 MB (hemat storage). Disimpan di disk public/foto-profil.
+        $validated['foto'] = FotoProfil::simpan($request->file('foto'));
+        unset($validated['hapus_foto']);
 
         $user = User::create($validated);
         // Sinkron kolom legacy + Spatie agar dua sistem tetap konsisten.
@@ -110,6 +133,18 @@ class UserController extends Controller
 
         $validated['privasi'] = $validated['privasi'] ?? false;
         $validated['prestasi'] = User::normalizePrestasi($validated['prestasi'] ?? null);
+
+        // Foto: upload baru gantikan lama (file lama dihapus agar hemat),
+        // atau hapus bila dicentang hapus_foto.
+        if ($request->hasFile('foto')) {
+            $validated['foto'] = FotoProfil::simpan($request->file('foto'), $user->foto);
+        } elseif ($request->boolean('hapus_foto')) {
+            FotoProfil::hapus($user->foto);
+            $validated['foto'] = null;
+        } else {
+            unset($validated['foto']);
+        }
+        unset($validated['hapus_foto']);
 
         $user->update($validated);
         $user->syncRoles([$validated['role']]);
@@ -168,6 +203,8 @@ class UserController extends Controller
             'email' => ['nullable', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user?->id)],
             'nomor_telepon' => 'nullable|string|max:20',
             'kata_motivasi' => 'nullable|string|max:1000',
+            'foto' => FotoProfil::rules(),
+            'hapus_foto' => 'nullable|boolean',
             'prestasi' => 'nullable|array|max:50',
             'prestasi.*' => 'nullable|string|max:255',
             'privasi' => 'boolean',

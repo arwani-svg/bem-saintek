@@ -1,5 +1,6 @@
 <script setup>
 import { Link, useForm } from '@inertiajs/vue3'
+import { ref } from 'vue'
 import ModalPage from '@/components/dashboard/ModalPage.vue'
 
 const props = defineProps({
@@ -30,6 +31,7 @@ const initialPrestasi = parsePrestasi(props.user.prestasi)
 if (initialPrestasi.length === 0) initialPrestasi.push('')
 
 const form = useForm({
+    _method: 'put',
     name: props.user.name,
     nim: props.user.nim,
     password: '',
@@ -51,7 +53,47 @@ const form = useForm({
     kata_motivasi: props.user.kata_motivasi || '',
     prestasi: initialPrestasi,
     privasi: props.user.privasi,
+    foto: null,
+    hapus_foto: false,
 })
+
+const fotoInput = ref(null)
+const previewUrl = ref(props.user.foto_url || null)
+const fotoError = ref('')
+
+const onFotoChange = (e) => {
+    fotoError.value = ''
+    const file = e.target.files?.[0] || null
+    if (!file) {
+        form.foto = null
+        previewUrl.value = form.hapus_foto ? null : (props.user.foto_url || null)
+        return
+    }
+    if (!['image/jpeg', 'image/png', 'image/webp', 'image/jpg'].includes(file.type)) {
+        fotoError.value = 'Format harus JPG, PNG, atau WebP.'
+        form.foto = null
+        return
+    }
+    if (file.size > 1024 * 1024) {
+        fotoError.value = 'Ukuran maksimal 1 MB agar hemat storage.'
+        form.foto = null
+        return
+    }
+    form.foto = file
+    form.hapus_foto = false
+    previewUrl.value = URL.createObjectURL(file)
+}
+
+const hapusFotoToggle = () => {
+    form.hapus_foto = !form.hapus_foto
+    if (form.hapus_foto) {
+        form.foto = null
+        previewUrl.value = null
+        if (fotoInput.value) fotoInput.value.value = ''
+    } else {
+        previewUrl.value = props.user.foto_url || null
+    }
+}
 
 const addPrestasi = () => {
     if (form.prestasi.length < 50) form.prestasi.push('')
@@ -64,7 +106,8 @@ const removePrestasi = (index) => {
 
 const submit = () => {
     form.prestasi = form.prestasi.map((p) => (p ?? '').trim()).filter((p) => p !== '')
-    form.put(`/users/${props.user.id}`)
+    // POST + _method=PUT agar file terbaca PHP.
+    form.post(`/users/${props.user.id}`, { forceFormData: true })
 }
 </script>
 
@@ -78,6 +121,22 @@ const submit = () => {
     >
         <form @submit.prevent="submit">
             <div class="space-y-6">
+                <h3 class="font-display text-lg font-bold text-white">Foto Profil <span class="font-mono text-xs font-normal text-white/30">opsional · max 1 MB</span></h3>
+                <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+                    <img v-if="previewUrl" :src="previewUrl" alt="Foto user" class="h-20 w-20 rounded-2xl border border-white/20 object-cover" />
+                    <div v-else class="flex h-20 w-20 items-center justify-center rounded-2xl border border-dashed border-white/20 text-2xl font-bold text-white/20">{{ (user.name || '?').charAt(0).toUpperCase() }}</div>
+                    <div class="min-w-0 flex-1 space-y-2">
+                        <input ref="fotoInput" type="file" accept="image/jpeg,image/png,image/webp,image/jpg" @change="onFotoChange" class="block w-full text-sm text-white/60 file:mr-3 file:cursor-pointer file:rounded-xl file:border file:border-cyan-300/30 file:bg-cyan-300/10 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-cyan-300 hover:file:bg-cyan-300/20" />
+                        <p v-if="fotoError" class="dash-error">{{ fotoError }}</p>
+                        <p v-if="form.errors.foto" class="dash-error">{{ form.errors.foto }}</p>
+                        <button v-if="props.user.foto_url || form.foto" type="button" @click="hapusFotoToggle" class="text-xs font-semibold" :class="form.hapus_foto ? 'text-cyan-300' : 'text-rose-300/80 hover:text-rose-300'">
+                            {{ form.hapus_foto ? '↩ Batalkan hapus foto' : '× Hapus foto saat ini' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 space-y-6 border-t border-white/5 pt-6">
                 <h3 class="font-display text-lg font-bold text-white">Informasi Dasar</h3>
 
                 <div class="grid grid-cols-1 gap-6 md:grid-cols-2">

@@ -67,14 +67,15 @@ class KegiatanController extends Controller
         return Inertia::render('Admin/Kegiatan/Create', [
             'prodiList' => User::PRODI,
             'rolesList' => Role::orderBy('name')->pluck('name'),
+            'semesterList' => User::SEMESTER_LIST,
             'user' => Auth::user(),
         ]);
     }
 
-    /** Endpoint JSON untuk picker peserta: ?search=&prodi=&role=&limit=20 */
+    /** Endpoint JSON untuk picker peserta: ?search=&prodi=&role=&semester=&limit=20 */
     public function cariUser(Request $request)
     {
-        $query = User::query()->select(['id', 'name', 'nim', 'prodi', 'role', 'status']);
+        $query = User::query()->select(['id', 'name', 'nim', 'foto', 'prodi', 'angkatan', 'role', 'status']);
 
         if ($search = $request->input('search', '')) {
             $query->where(function ($q) use ($search) {
@@ -88,6 +89,12 @@ class KegiatanController extends Controller
         if ($request->filled('role')) {
             $query->where('role', $request->input('role'));
         }
+        if ($request->filled('semester')) {
+            // Semester berjalan dihitung dari angkatan — petakan ke angkatan.
+            $dipilih = array_map('intval', (array) $request->input('semester'));
+            $angkatans = User::angkatanUntukSemesterBanyak($dipilih);
+            $query->whereIn('angkatan', $angkatans);
+        }
         if ($request->filled('except_kegiatan')) {
             $sudah = KegiatanPeserta::where('kegiatan_id', $request->input('except_kegiatan'))->pluck('user_id');
             $query->whereNotIn('id', $sudah);
@@ -95,6 +102,17 @@ class KegiatanController extends Controller
 
         return response()->json(
             $query->orderBy('name')->limit(min(50, (int) $request->input('limit', 20)))->get()
+                ->map(fn (User $u) => [
+                    'id' => $u->id,
+                    'name' => $u->name,
+                    'nim' => $u->nim,
+                    'foto_url' => $u->foto_url,
+                    'prodi' => $u->prodi,
+                    'angkatan' => $u->angkatan,
+                    'semester' => $u->semester,
+                    'role' => $u->role,
+                    'status' => $u->status,
+                ])
         );
     }
 
@@ -140,7 +158,7 @@ class KegiatanController extends Controller
     /** Detail kegiatan: status tiap peserta + ringkasan. */
     public function show(Request $request, Kegiatan $kegiatan)
     {
-        $pesertaQuery = $kegiatan->pesertas()->with(['user:id,name,nim,prodi,role', 'kehadiran']);
+        $pesertaQuery = $kegiatan->pesertas()->with(['user:id,name,nim,foto,prodi,role', 'kehadiran']);
 
         if ($search = $request->input('search', '')) {
             $pesertaQuery->whereHas('user', fn ($q) => $q->where('name', 'like', "%{$search}%")->orWhere('nim', 'like', "%{$search}%"));
@@ -202,7 +220,7 @@ class KegiatanController extends Controller
         $limit = min(12, max(1, (int) $request->input('limit', 8)));
         $q = trim((string) $request->input('q', ''));
 
-        $query = $kegiatan->pesertas()->with(['user:id,name,nim,prodi', 'kehadiran']);
+        $query = $kegiatan->pesertas()->with(['user:id,name,nim,foto,prodi', 'kehadiran']);
 
         if ($q !== '') {
             $query->whereHas('user', fn ($uq) => $uq
@@ -238,7 +256,7 @@ class KegiatanController extends Controller
             'keterangan' => 'nullable|string|max:255',
         ]);
 
-        $peserta = KegiatanPeserta::with('user:id,name')->findOrFail($validated['peserta_id']);
+        $peserta = KegiatanPeserta::with('user:id,name,foto')->findOrFail($validated['peserta_id']);
         abort_unless($peserta->kegiatan_id === $kegiatan->id, 404);
 
         Kehadiran::updateOrCreate(
@@ -254,6 +272,7 @@ class KegiatanController extends Controller
                 'peserta_id' => $peserta->id,
                 'status' => $validated['status'],
                 'nama' => $peserta->user?->name,
+                'foto_url' => $peserta->user?->foto_url,
                 'ringkasan' => $this->ringkasan($kegiatan->fresh()),
             ]);
         }
@@ -291,6 +310,120 @@ class KegiatanController extends Controller
      */
     public function rekap(Request $request)
     {
+        $data = $this->dataRekap($request);
+
+        return Inertia::render('Admin/Absensi/Rekap', [
+            'rows' => $data['rows'],
+            'filters' => $request->only(['search', 'prodi', 'semester', 'dari', 'sampai']),
+            'prodiList' => User::PRODI,
+            'semesterList' => User::SEMESTER_LIST,
+            'totalKegiatan' => $data['totalKegiatan'],
+            'user' => Auth::user(),
+        ]);
+    }
+
+    /**
+     * Detail rekap per orang: ringkasan + daftar tiap kegiatan yang diikuti
+     * beserta statusnya (hadir/izin/sakit/alpa/belum) dan poinnya.
+     */
+    public function rekapDetail(Request $request, User $user)
+    {
+        $pesertas = KegiatanPeserta::with([
+            'kegiatan:id,nama,tanggal,poin_alpa,status',
+            'kehadiran',
+        ])
+            ->where('user_id', $user->id)
+            ->whereHas('kegiatan', function ($q) use ($request) {
+                $q->where('status', '!=', Kegiatan::STATUS_DIBATALKAN);
+                if ($request->filled('dari')) {
+                    $q->whereDate('tanggal', '>=', $request->input('dari'));
+                }
+                if ($request->filled('sampai')) {
+                    $q->whereDate('tanggal', '<=', $request->input('sampai'));
+                }
+            })
+            ->get()
+            ->sortByDesc(fn ($p) => $p->kegiatan?->tanggal?->format('Y-m-d').'-'.$p->kegiatan?->id)
+            ->values();
+
+        $ringkasan = ['hadir' => 0, 'izin' => 0, 'sakit' => 0, 'alpa' => 0, 'belum' => 0, 'poin' => 0, 'kegiatan' => 0];
+        $rows = $pesertas->map(function (KegiatanPeserta $p) use (&$ringkasan) {
+            $status = $p->kehadiran?->status ?? 'belum';
+            $poin = $status === Kehadiran::ALPA ? (int) ($p->kegiatan?->poin_alpa ?? 0) : 0;
+            $ringkasan[$status]++;
+            $ringkasan['poin'] += $poin;
+            $ringkasan['kegiatan']++;
+
+            return [
+                'kegiatan_id' => $p->kegiatan?->id,
+                'nama' => $p->kegiatan?->nama ?? '(kegiatan dihapus)',
+                'tanggal' => $p->kegiatan?->tanggal?->format('Y-m-d'),
+                'status_kegiatan' => $p->kegiatan?->status,
+                'status' => $status,
+                'keterangan' => $p->kehadiran?->keterangan,
+                'poin' => $poin,
+            ];
+        });
+
+        return Inertia::render('Admin/Absensi/RekapDetail', [
+            'detailUser' => [
+                'id' => $user->id,
+                'nama' => $user->name,
+                'nim' => $user->nim,
+                'foto_url' => $user->foto_url,
+                'prodi' => $user->prodi,
+                'angkatan' => $user->angkatan,
+                'semester' => $user->semester,
+            ],
+            'ringkasan' => $ringkasan,
+            'rows' => $rows,
+            'filters' => $request->only(['dari', 'sampai']),
+            'user' => Auth::user(),
+        ]);
+    }
+
+    /**
+     * Ekspor rekap ke CSV (kompatibel Excel: BOM + delimiter ;).
+     * Filter sama persis dengan halaman rekap.
+     */
+    public function rekapExport(Request $request)
+    {
+        $data = $this->dataRekap($request);
+        $rows = $data['rows'];
+        $namaFile = 'rekap-absensi-'.now()->format('Ymd-His').'.csv';
+
+        return response()->streamDownload(function () use ($rows) {
+            $out = fopen('php://output', 'w');
+            // BOM agar Excel Windows membaca UTF-8 dengan benar.
+            fwrite($out, "\xEF\xBB\xBF");
+            fputcsv($out, ['No', 'Nama', 'NIM', 'Prodi', 'Angkatan', 'Semester', 'Hadir', 'Izin', 'Sakit', 'Alpa', 'Total Poin', 'Jml Kegiatan'], ';');
+            foreach ($rows as $i => $r) {
+                fputcsv($out, [
+                    $i + 1,
+                    $r['nama'],
+                    $r['nim'],
+                    $r['prodi'],
+                    $r['angkatan'],
+                    $r['semester'],
+                    $r['hadir'],
+                    $r['izin'],
+                    $r['sakit'],
+                    $r['alpa'],
+                    $r['poin'],
+                    $r['kegiatan'],
+                ], ';');
+            }
+            fclose($out);
+        }, $namaFile, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
+    /**
+     * Agregat rekap dipakai bersama oleh halaman rekap & ekspor CSV.
+     *
+     * @return array{rows: \Illuminate\Support\Collection, totalKegiatan: int}
+     */
+    private function dataRekap(Request $request): array
+    {
         $kegiatanQuery = Kegiatan::where('status', '!=', Kegiatan::STATUS_DIBATALKAN);
         if ($request->filled('dari')) {
             $kegiatanQuery->whereDate('tanggal', '>=', $request->input('dari'));
@@ -300,11 +433,13 @@ class KegiatanController extends Controller
         }
         $kegiatanIds = $kegiatanQuery->pluck('id');
 
-        $hadir = Kehadiran::with(['peserta.user:id,name,nim,prodi', 'peserta.kegiatan:id,nama,tanggal,poin_alpa'])
+        $hadir = Kehadiran::with(['peserta.user:id,name,nim,foto,prodi,angkatan', 'peserta.kegiatan:id,nama,tanggal,poin_alpa'])
             ->whereHas('peserta', fn ($q) => $q->whereIn('kegiatan_id', $kegiatanIds))
             ->get();
 
-        // Filter by user di memori (-search & prodi) agar agregat tetap sederhana.
+        $semesterDipilih = $request->filled('semester') ? (int) $request->input('semester') : null;
+
+        // Filter by user di memori (-search & prodi & semester) agar agregat tetap sederhana.
         $agregat = [];
         foreach ($hadir as $h) {
             $u = $h->peserta->user;
@@ -317,9 +452,13 @@ class KegiatanController extends Controller
             if ($request->filled('prodi') && $u->prodi !== $request->input('prodi')) {
                 continue;
             }
+            if (! is_null($semesterDipilih) && $u->semester !== $semesterDipilih) {
+                continue;
+            }
             $key = $u->id;
             $agregat[$key] ??= [
-                'user_id' => $u->id, 'nama' => $u->name, 'nim' => $u->nim, 'prodi' => $u->prodi,
+                'user_id' => $u->id, 'nama' => $u->name, 'nim' => $u->nim, 'foto_url' => $u->foto_url, 'prodi' => $u->prodi,
+                'angkatan' => $u->angkatan, 'semester' => $u->semester,
                 'hadir' => 0, 'izin' => 0, 'sakit' => 0, 'alpa' => 0, 'poin' => 0, 'kegiatan' => 0,
             ];
             $agregat[$key][$h->status]++;
@@ -331,13 +470,7 @@ class KegiatanController extends Controller
 
         $rows = collect($agregat)->sortBy([['poin', 'desc'], ['alpa', 'desc'], ['nama', 'asc']])->values();
 
-        return Inertia::render('Admin/Absensi/Rekap', [
-            'rows' => $rows,
-            'filters' => $request->only(['search', 'prodi', 'dari', 'sampai']),
-            'prodiList' => User::PRODI,
-            'totalKegiatan' => $kegiatanIds->count(),
-            'user' => Auth::user(),
-        ]);
+        return ['rows' => $rows, 'totalKegiatan' => $kegiatanIds->count()];
     }
 
     public function edit(Kegiatan $kegiatan)

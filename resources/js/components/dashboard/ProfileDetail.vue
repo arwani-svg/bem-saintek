@@ -80,9 +80,18 @@ const stats = computed(() => [
             <div class="relative p-6 sm:p-8">
                 <div class="flex flex-col justify-between gap-6 lg:flex-row lg:items-center">
                     <div class="flex flex-col items-center gap-5 sm:flex-row sm:items-start">
-                        <!-- Avatar: inisial (belum ada kolom foto di DB) -->
+                        <!-- Avatar: foto profil bila ada, fallback inisial -->
                         <div class="relative">
-                            <div class="flex h-28 w-28 items-center justify-center rounded-3xl border border-white/20 bg-gradient-to-br from-cyan-300 to-violet-500 font-display text-4xl font-bold text-black shadow-xl">
+                            <img
+                                v-if="profile.foto_url"
+                                :src="profile.foto_url"
+                                :alt="profile.name"
+                                class="h-28 w-28 rounded-3xl border border-white/20 object-cover shadow-xl"
+                            />
+                            <div
+                                v-else
+                                class="flex h-28 w-28 items-center justify-center rounded-3xl border border-white/20 bg-gradient-to-br from-cyan-300 to-violet-500 font-display text-4xl font-bold text-black shadow-xl"
+                            >
                                 {{ initial }}
                             </div>
                             <span class="absolute bottom-2 right-2 h-5 w-5 rounded-full border-4 border-[#0a0f1a] bg-emerald-400"></span>

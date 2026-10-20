@@ -9,12 +9,17 @@ const props = defineProps({
     filters: Object,
     user: Object,
     rolesList: Array,
+    prodiList: Array,
+    semesterList: Array,
+    statusList: Array,
 })
 
 const filters = reactive({
     search: props.filters.search || '',
     role: props.filters.role || '',
     status: props.filters.status || '',
+    prodi: props.filters.prodi || '',
+    semester: props.filters.semester || '',
 })
 
 const search = () => {
@@ -22,12 +27,25 @@ const search = () => {
     if (filters.search) params.append('search', filters.search)
     if (filters.role) params.append('role', filters.role)
     if (filters.status) params.append('status', filters.status)
+    if (filters.prodi) params.append('prodi', filters.prodi)
+    if (filters.semester) params.append('semester', filters.semester)
 
     router.visit('/users' + (params.toString() ? '?' + params.toString() : ''), {
         preserveState: true,
         replace: true,
     })
 }
+
+const reset = () => {
+    filters.search = ''
+    filters.role = ''
+    filters.status = ''
+    filters.prodi = ''
+    filters.semester = ''
+    search()
+}
+
+const adaFilter = () => !!(filters.search || filters.role || filters.status || filters.prodi || filters.semester)
 
 let debounceTimer = null
 watch(() => filters.search, () => {
@@ -83,12 +101,12 @@ const roleColors = {
     >
 
         <div class="dash-card mb-6 p-5 sm:p-6">
-            <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
-                <div class="md:col-span-2">
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-6">
+                <div class="md:col-span-3 lg:col-span-2">
                     <input
                         v-model="filters.search"
                         type="text"
-                        placeholder="Cari nama, NIM, atau prodi..."
+                        placeholder="Cari nama / NIM..."
                         class="dash-input"
                     />
                 </div>
@@ -101,18 +119,34 @@ const roleColors = {
                 <div>
                     <select v-model="filters.status" @change="search" class="dash-input cursor-pointer">
                         <option value="">Semua Status</option>
-                        <option value="aktif">aktif</option>
-                        <option value="cuti">cuti</option>
-                        <option value="DO">DO</option>
-                        <option value="keluar">keluar</option>
-                        <option value="lulus">lulus</option>
+                        <option v-for="s in statusList ?? ['aktif', 'cuti', 'DO', 'keluar', 'lulus']" :key="s" :value="s">{{ s }}</option>
+                    </select>
+                </div>
+                <div>
+                    <select v-model="filters.prodi" @change="search" class="dash-input cursor-pointer">
+                        <option value="">Semua Prodi</option>
+                        <option v-for="p in prodiList ?? []" :key="p" :value="p">{{ p }}</option>
+                    </select>
+                </div>
+                <div>
+                    <select
+                        v-model="filters.semester"
+                        @change="search"
+                        class="dash-input cursor-pointer"
+                        title="Semester berjalan (dihitung otomatis dari angkatan)"
+                    >
+                        <option value="">Semua Semester</option>
+                        <option v-for="s in semesterList ?? []" :key="s" :value="s">Semester {{ s }}</option>
                     </select>
                 </div>
             </div>
-            <div class="mt-4">
+            <div class="mt-4 flex flex-wrap items-center gap-2">
                 <Link href="/users/create" class="dash-btn-primary">
                     + Tambah User
                 </Link>
+                <button v-if="adaFilter()" @click="reset" class="dash-btn-ghost">
+                    Reset
+                </button>
             </div>
         </div>
 
@@ -135,7 +169,17 @@ const roleColors = {
                         <tr v-for="u in users.data" :key="u.id">
                             <td>
                                 <div class="flex items-center gap-3">
-                                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 to-violet-500 text-sm font-bold text-black">
+                                    <img
+                                        v-if="u.foto_url"
+                                        :src="u.foto_url"
+                                        :alt="u.name"
+                                        class="h-10 w-10 shrink-0 rounded-full border border-white/20 object-cover"
+                                        loading="lazy"
+                                    />
+                                    <div
+                                        v-else
+                                        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 to-violet-500 text-sm font-bold text-black"
+                                    >
                                         {{ u.name.charAt(0).toUpperCase() }}
                                     </div>
                                     <div>

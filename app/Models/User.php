@@ -30,9 +30,13 @@ class User extends Authenticatable
 
     public const KELAS = ['A1', 'B1', 'C1', 'C2'];
 
+    /** Pilihan semester untuk filter (D3/S1 umum 1-8, buffer sampai 14). */
+    public const SEMESTER_LIST = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
+
     protected $fillable = [
         'name',
         'nim',
+        'foto',
         'password',
         'role',
         'jenis_kelamin',
@@ -58,10 +62,17 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    protected $appends = ['semester', 'prestasi_list'];
+    protected $appends = ['semester', 'prestasi_list', 'foto_url'];
 
     protected static function booted(): void
     {
+        // Hapus file foto saat user dihapus agar storage hosting murah tidak bocor.
+        static::deleting(function (User $user) {
+            $foto = $user->getAttribute('foto');
+            if ($foto && \Illuminate\Support\Facades\Storage::disk('public')->exists($foto)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($foto);
+            }
+        });
         // Jaga konsistensi: setiap user baru otomatis dapat Spatie role
         // sesuai kolom `role` (fallback mahasiswa). Berlaku untuk semua
         // jalur pembuatan (form admin, factory, tinker, register).
@@ -140,6 +151,24 @@ class User extends Authenticatable
         );
     }
 
+    /**
+     * URL publik foto profil (null bila belum ada foto — frontend fallback ke inisial).
+     * Disimpan sebagai path relatif di disk `public`, mis. foto-profil/xxx.jpg.
+     */
+    protected function fotoUrl(): Attribute
+    {
+        return Attribute::make(
+            get: function ($value, $attributes) {
+                $path = $attributes['foto'] ?? $this->getAttribute('foto');
+                if (! $path) {
+                    return null;
+                }
+
+                return \Illuminate\Support\Facades\Storage::disk('public')->url($path);
+            },
+        );
+    }
+
     public static function hitungSemester(int $angkatan, ?Carbon $tanggal = null): int
     {
         $tanggal ??= Carbon::now();
@@ -158,6 +187,39 @@ class User extends Authenticatable
         }
 
         return max(1, $semester);
+    }
+
+    /**
+     * Balikan dari hitungSemester: angkatan berapa yang semesternya = $semester
+     * pada tanggal acuan (default sekarang). Null bila tidak ada angkatan
+     * yang cocok (mis. semester genap di periode ganjil).
+     */
+    public static function angkatanUntukSemester(int $semester, ?Carbon $tanggal = null): ?int
+    {
+        $tanggal ??= Carbon::now();
+        $tahun = (int) $tanggal->year;
+
+        for ($angkatan = $tahun; $angkatan >= $tahun - 12; $angkatan--) {
+            if (self::hitungSemester($angkatan, $tanggal) === $semester) {
+                return $angkatan;
+            }
+        }
+
+        return null;
+    }
+
+    /** Versi jamak: petakan daftar semester ke daftar angkatan yang cocok. */
+    public static function angkatanUntukSemesterBanyak(array $semesters, ?Carbon $tanggal = null): array
+    {
+        $angkatans = [];
+        foreach ($semesters as $s) {
+            $a = self::angkatanUntukSemester((int) $s, $tanggal);
+            if (! is_null($a)) {
+                $angkatans[] = $a;
+            }
+        }
+
+        return array_values(array_unique($angkatans));
     }
 
     /**

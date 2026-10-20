@@ -184,7 +184,17 @@ const doHapus = () => {
 
                 <div class="space-y-2.5">
                     <div v-for="p in pesertas" :key="p.id" class="dash-card flex flex-wrap items-center gap-3 p-3.5">
-                        <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 to-violet-500 text-sm font-bold text-black">
+                        <img
+                            v-if="p.user?.foto_url"
+                            :src="p.user.foto_url"
+                            :alt="p.user?.name"
+                            class="h-9 w-9 shrink-0 rounded-full border border-white/20 object-cover"
+                            loading="lazy"
+                        />
+                        <div
+                            v-else
+                            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 to-violet-500 text-sm font-bold text-black"
+                        >
                             {{ (p.user?.name || '?').charAt(0).toUpperCase() }}
                         </div>
                         <div class="min-w-0 flex-1">
@@ -219,6 +229,19 @@ const doHapus = () => {
                             :class="tambahDipilih.has(u.id) ? 'border-cyan-300/40 bg-cyan-300/10' : 'border-white/5 hover:border-white/20'"
                             class="flex w-full items-center gap-2 rounded-xl border bg-white/[0.02] px-3 py-2 text-left"
                         >
+                            <img
+                                v-if="u.foto_url"
+                                :src="u.foto_url"
+                                :alt="u.name"
+                                class="h-8 w-8 shrink-0 rounded-full border border-white/20 object-cover"
+                                loading="lazy"
+                            />
+                            <div
+                                v-else
+                                class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 to-violet-500 text-xs font-bold text-black"
+                            >
+                                {{ (u.name || '?').charAt(0).toUpperCase() }}
+                            </div>
                             <span class="min-w-0 flex-1">
                                 <span class="block truncate text-sm font-semibold text-white">{{ u.name }}</span>
                                 <span class="block truncate font-mono text-[11px] text-white/40">{{ u.nim }} · {{ u.prodi }}</span>

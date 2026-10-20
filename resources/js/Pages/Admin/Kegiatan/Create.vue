@@ -6,6 +6,7 @@ import ModalPage from '@/components/dashboard/ModalPage.vue'
 const props = defineProps({
     prodiList: Array,
     rolesList: Array,
+    semesterList: Array,
     user: Object,
 })
 
@@ -19,8 +20,8 @@ const form = useForm({
     peserta_ids: [],
 })
 
-// --- Picker peserta: cari by nama/NIM, filter by role/prodi ---
-const q = reactive({ search: '', prodi: '', role: '' })
+// --- Picker peserta: cari by nama/NIM, filter by role/prodi/semester ---
+const q = reactive({ search: '', prodi: '', role: '', semester: '' })
 const hasil = ref([])
 const loading = ref(false)
 const dipilih = ref(new Map())
@@ -32,6 +33,7 @@ const fetchHasil = async () => {
         if (q.search) params.append('search', q.search)
         if (q.prodi) params.append('prodi', q.prodi)
         if (q.role) params.append('role', q.role)
+        if (q.semester) params.append('semester', q.semester)
         params.append('limit', '20')
         const res = await fetch('/kegiatan/cari-user?' + params.toString(), {
             headers: { Accept: 'application/json' },
@@ -120,7 +122,7 @@ const submit = () => {
                     <button v-if="dipilih.size" type="button" @click="bersihkan" class="text-xs text-rose-300 hover:underline">Bersihkan</button>
                 </div>
 
-                <div class="mt-3 grid grid-cols-1 gap-3 md:grid-cols-3">
+                <div class="mt-3 grid grid-cols-1 gap-3 md:grid-cols-4">
                     <input v-model="q.search" type="text" placeholder="Cari nama / NIM..." class="dash-input" />
                     <select v-model="q.prodi" class="dash-input cursor-pointer">
                         <option value="">Semua prodi</option>
@@ -129,6 +131,10 @@ const submit = () => {
                     <select v-model="q.role" class="dash-input cursor-pointer">
                         <option value="">Semua role</option>
                         <option v-for="r in rolesList" :key="r" :value="r">{{ r }}</option>
+                    </select>
+                    <select v-model="q.semester" class="dash-input cursor-pointer" title="Filter semester berjalan (dari angkatan)">
+                        <option value="">Semua semester</option>
+                        <option v-for="s in semesterList" :key="s" :value="s">Semester {{ s }}</option>
                     </select>
                 </div>
 
@@ -149,7 +155,7 @@ const submit = () => {
                         <span :class="isDipilih(u.id) ? 'bg-cyan-300 text-black' : 'border-white/20 text-transparent'" class="flex h-5 w-5 shrink-0 items-center justify-center rounded-md border text-xs font-bold">✓</span>
                         <span class="min-w-0 flex-1">
                             <span class="block truncate text-sm font-semibold text-white">{{ u.name }}</span>
-                            <span class="block truncate font-mono text-[11px] text-white/40">{{ u.nim }} · {{ u.prodi }} · {{ u.role }}</span>
+                            <span class="block truncate font-mono text-[11px] text-white/40">{{ u.nim }} · {{ u.prodi }} · smt {{ u.semester ?? '-' }} · {{ u.role }}</span>
                         </span>
                     </button>
                     <p v-if="!hasil.length && !loading" class="py-6 text-center text-sm text-white/30">Tidak ada hasil. Coba kata kunci lain.</p>

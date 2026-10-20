@@ -1,5 +1,6 @@
 <script setup>
 import { Link, useForm } from '@inertiajs/vue3'
+import { computed, ref } from 'vue'
 import ModalPage from '@/components/dashboard/ModalPage.vue'
 
 const props = defineProps({
@@ -17,6 +18,7 @@ const parsePrestasi = () => {
 const initialPrestasi = parsePrestasi()
 
 const form = useForm({
+    _method: 'put',
     name: props.profile.name,
     password: '',
     password_confirmation: '',
@@ -32,7 +34,50 @@ const form = useForm({
     kata_motivasi: props.profile.kata_motivasi || '',
     privasi: !!props.profile.privasi,
     prestasi: initialPrestasi,
+    foto: null,
+    hapus_foto: false,
 })
+
+// Preview foto baru (client-side) + validasi ringan 1 MB sebelum dikirim.
+const fotoInput = ref(null)
+const previewUrl = ref(props.profile.foto_url || null)
+const fotoError = ref('')
+
+const onFotoChange = (e) => {
+    fotoError.value = ''
+    const file = e.target.files?.[0] || null
+    if (!file) {
+        form.foto = null
+        previewUrl.value = form.hapus_foto ? null : (props.profile.foto_url || null)
+        return
+    }
+    if (!['image/jpeg', 'image/png', 'image/webp', 'image/jpg'].includes(file.type)) {
+        fotoError.value = 'Format harus JPG, PNG, atau WebP.'
+        form.foto = null
+        return
+    }
+    if (file.size > 1024 * 1024) {
+        fotoError.value = 'Ukuran maksimal 1 MB agar hemat storage.'
+        form.foto = null
+        return
+    }
+    form.foto = file
+    form.hapus_foto = false
+    previewUrl.value = URL.createObjectURL(file)
+}
+
+const hapusFotoToggle = () => {
+    form.hapus_foto = !form.hapus_foto
+    if (form.hapus_foto) {
+        form.foto = null
+        previewUrl.value = null
+        if (fotoInput.value) fotoInput.value.value = ''
+    } else {
+        previewUrl.value = props.profile.foto_url || null
+    }
+}
+
+const initialFoto = computed(() => (props.profile?.name?.charAt(0) || 'M').toUpperCase())
 
 const addPrestasi = () => {
     if (form.prestasi.length < 50) form.prestasi.push('')
@@ -44,7 +89,8 @@ const removePrestasi = (index) => {
 }
 
 const submit = () => {
-    form.put('/profil')
+    // Pakai POST + _method=PUT agar file terbaca PHP (PUT murni gagal parse multipart).
+    form.post('/profil', { forceFormData: true })
 }
 </script>
 
@@ -57,6 +103,40 @@ const submit = () => {
         backHref="/profil"
     >
         <form @submit.prevent="submit" class="space-y-6">
+            <!-- Foto profil: nullable, max 1 MB -->
+            <div class="space-y-4">
+                <h3 class="font-display text-lg font-bold text-white">Foto Profil</h3>
+                <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+                    <img
+                        v-if="previewUrl"
+                        :src="previewUrl"
+                        alt="Foto profil"
+                        class="h-24 w-24 rounded-2xl border border-white/20 object-cover"
+                    />
+                    <div
+                        v-else
+                        class="flex h-24 w-24 items-center justify-center rounded-2xl border border-white/20 bg-gradient-to-br from-cyan-300 to-violet-500 font-display text-3xl font-bold text-black"
+                    >
+                        {{ initialFoto }}
+                    </div>
+                    <div class="min-w-0 flex-1 space-y-2">
+                        <input ref="fotoInput" type="file" accept="image/jpeg,image/png,image/webp,image/jpg" @change="onFotoChange" class="block w-full text-sm text-white/60 file:mr-3 file:cursor-pointer file:rounded-xl file:border file:border-cyan-300/30 file:bg-cyan-300/10 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-cyan-300 hover:file:bg-cyan-300/20" />
+                        <p class="text-xs text-white/35">Opsional · JPG/PNG/WebP · maksimal 1 MB (disarankan foto kotak &lt; 800px agar tajam tapi hemat).</p>
+                        <p v-if="fotoError" class="dash-error">{{ fotoError }}</p>
+                        <p v-if="form.errors.foto" class="dash-error">{{ form.errors.foto }}</p>
+                        <button
+                            v-if="props.profile.foto_url || form.foto"
+                            type="button"
+                            @click="hapusFotoToggle"
+                            class="text-xs font-semibold"
+                            :class="form.hapus_foto ? 'text-cyan-300' : 'text-rose-300/80 hover:text-rose-300'"
+                        >
+                            {{ form.hapus_foto ? '↩ Batalkan hapus foto' : '× Hapus foto saat ini' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Data yang bisa diubah -->
             <div class="space-y-6">
                 <h3 class="font-display text-lg font-bold text-white">Data Diri</h3>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ActivityLog;
 use App\Models\User;
+use App\Services\FotoProfil;
 use App\Services\ProfilRiwayat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -67,6 +68,9 @@ class ProfileController extends Controller
             'provinsi' => 'nullable|string|max:255',
             'kata_motivasi' => 'nullable|string|max:1000',
             'privasi' => 'boolean',
+            // Foto profil sendiri: nullable, max 1 MB agar hemat storage hosting murah.
+            'foto' => FotoProfil::rules(),
+            'hapus_foto' => 'nullable|boolean',
         ];
 
         if ($isPengurus) {
@@ -95,6 +99,17 @@ class ProfileController extends Controller
         }
 
         $validated['privasi'] = $validated['privasi'] ?? false;
+
+        // Foto baru gantikan lama (file lama dihapus), atau hapus bila dicentang.
+        if ($request->hasFile('foto')) {
+            $validated['foto'] = FotoProfil::simpan($request->file('foto'), $me->foto);
+        } elseif ($request->boolean('hapus_foto')) {
+            FotoProfil::hapus($me->foto);
+            $validated['foto'] = null;
+        } else {
+            unset($validated['foto']);
+        }
+        unset($validated['hapus_foto']);
 
         $me->update($validated);
 

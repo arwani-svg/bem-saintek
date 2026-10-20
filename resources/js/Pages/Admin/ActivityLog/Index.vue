@@ -1,7 +1,8 @@
 <script setup>
-import { Head, Link, router } from '@inertiajs/vue3'
+import { Head, router } from '@inertiajs/vue3'
 import { reactive, ref, watch } from 'vue'
 import Layout from '@/components/dashboard/Layout.vue'
+import Pagination from '@/components/dashboard/Pagination.vue'
 
 const props = defineProps({
     logs: Object,
@@ -199,21 +200,15 @@ const waktuRelatif = (iso) => {
                 </table>
             </div>
 
-            <div v-if="logs.last_page > 1" class="flex flex-wrap items-center justify-between gap-3 border-t border-white/5 px-6 py-4">
-                <p class="text-sm text-white/35">
-                    Menampilkan {{ logs.from }} - {{ logs.to }} dari {{ logs.total }} aktivitas
-                </p>
-                <div class="flex items-center gap-1">
-                    <Link
-                        v-for="page in logs.last_page"
-                        :key="page"
-                        :href="pageHref(page)"
-                        :class="['dash-page-btn', { active: page === logs.current_page }]"
-                    >
-                        {{ page }}
-                    </Link>
-                </div>
-            </div>
+            <Pagination
+                :current-page="logs.current_page"
+                :last-page="logs.last_page"
+                :total="logs.total"
+                :from="logs.from"
+                :to="logs.to"
+                item-label="aktivitas"
+                :href-for="pageHref"
+            />
         </div>
     </Layout>
 </template>

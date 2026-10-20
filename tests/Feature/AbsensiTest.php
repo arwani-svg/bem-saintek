@@ -241,4 +241,117 @@ class AbsensiTest extends TestCase
         $res->assertOk();
         $this->assertEquals(10, $res->viewData('page')['props']['totalPoin']);
     }
+
+    public function test_filter_semester_di_picker_dan_rekap(): void
+    {
+        $op = $this->operator();
+        $smtA = User::hitungSemester(2024);
+        $smtB = User::hitungSemester(2023);
+        $this->assertNotEquals($smtA, $smtB);
+
+        $a = User::factory()->create(['name' => 'Smt A', 'angkatan' => 2024]);
+        $b = User::factory()->create(['name' => 'Smt B', 'angkatan' => 2023]);
+
+        // Picker peserta: hanya semester A.
+        $res = $this->actingAs($op)->getJson("/kegiatan/cari-user?semester={$smtA}&limit=50");
+        $res->assertOk();
+        $ids = collect($res->json())->pluck('id')->all();
+        $this->assertContains($a->id, $ids);
+        $this->assertNotContains($b->id, $ids);
+        // Semester ikut terkirim di payload.
+        $rowA = collect($res->json())->firstWhere('id', $a->id);
+        $this->assertEquals($smtA, $rowA['semester']);
+
+        // Rekap: filter semester yang sama.
+        $k = Kegiatan::create([
+            'nama' => 'Kegiatan Smt', 'tanggal' => '2026-10-09',
+            'poin_alpa' => 10, 'status' => 'selesai', 'created_by' => $op->id,
+        ]);
+        $pA = KegiatanPeserta::create(['kegiatan_id' => $k->id, 'user_id' => $a->id]);
+        $pB = KegiatanPeserta::create(['kegiatan_id' => $k->id, 'user_id' => $b->id]);
+        Kehadiran::create(['kegiatan_peserta_id' => $pA->id, 'status' => 'alpa']);
+        Kehadiran::create(['kegiatan_peserta_id' => $pB->id, 'status' => 'hadir']);
+
+        $res = $this->actingAs($op)->get("/absensi/rekap?semester={$smtA}");
+        $res->assertOk();
+        $rows = collect($res->viewData('page')['props']['rows']);
+        $this->assertTrue($rows->contains(fn ($r) => $r['user_id'] === $a->id));
+        $this->assertFalse($rows->contains(fn ($r) => $r['user_id'] === $b->id));
+
+        // Tanpa filter semester: keduanya muncul.
+        $res = $this->actingAs($op)->get('/absensi/rekap');
+        $rows = collect($res->viewData('page')['props']['rows']);
+        $this->assertTrue($rows->contains(fn ($r) => $r['user_id'] === $a->id));
+        $this->assertTrue($rows->contains(fn ($r) => $r['user_id'] === $b->id));
+    }
+
+    public function test_rekap_detail_per_orang(): void
+    {
+        $op = $this->operator();
+        $mhs = User::factory()->create(['name' => 'Detail Sari']);
+
+        $k1 = Kegiatan::create([
+            'nama' => 'Rapat', 'tanggal' => '2026-10-01',
+            'poin_alpa' => 10, 'status' => 'selesai', 'created_by' => $op->id,
+        ]);
+        $k2 = Kegiatan::create([
+            'nama' => 'Makrab', 'tanggal' => '2026-10-05',
+            'poin_alpa' => 20, 'status' => 'selesai', 'created_by' => $op->id,
+        ]);
+        $p1 = KegiatanPeserta::create(['kegiatan_id' => $k1->id, 'user_id' => $mhs->id]);
+        $p2 = KegiatanPeserta::create(['kegiatan_id' => $k2->id, 'user_id' => $mhs->id]);
+        Kehadiran::create(['kegiatan_peserta_id' => $p1->id, 'status' => 'hadir']);
+        Kehadiran::create(['kegiatan_peserta_id' => $p2->id, 'status' => 'alpa']);
+
+        // Mahasiswa biasa ditolak.
+        $this->actingAs(User::factory()->create())->get("/absensi/rekap/{$mhs->id}")->assertForbidden();
+
+        $res = $this->actingAs($op)->get("/absensi/rekap/{$mhs->id}");
+        $res->assertOk();
+        $page = $res->viewData('page')['props'];
+        $this->assertEquals('Detail Sari', $page['detailUser']['nama']);
+        $this->assertEquals(1, $page['ringkasan']['hadir']);
+        $this->assertEquals(1, $page['ringkasan']['alpa']);
+        $this->assertEquals(20, $page['ringkasan']['poin']);
+        $this->assertCount(2, $page['rows']);
+
+        // Filter tanggal: hanya Makrab.
+        $res = $this->actingAs($op)->get("/absensi/rekap/{$mhs->id}?dari=2026-10-03&sampai=2026-10-09");
+        $page = $res->viewData('page')['props'];
+        $this->assertCount(1, $page['rows']);
+        $this->assertEquals('Makrab', $page['rows'][0]['nama']);
+    }
+
+    public function test_rekap_export_csv_memakai_filter_aktif(): void
+    {
+        $op = $this->operator();
+        $ikut = User::factory()->create(['name' => 'Ekspor Ikut', 'angkatan' => 2024]);
+        $lain = User::factory()->create(['name' => 'Ekspor Lain', 'angkatan' => 2023]);
+
+        $k = Kegiatan::create([
+            'nama' => 'Baksti', 'tanggal' => '2026-10-09',
+            'poin_alpa' => 10, 'status' => 'selesai', 'created_by' => $op->id,
+        ]);
+        $pI = KegiatanPeserta::create(['kegiatan_id' => $k->id, 'user_id' => $ikut->id]);
+        $pL = KegiatanPeserta::create(['kegiatan_id' => $k->id, 'user_id' => $lain->id]);
+        Kehadiran::create(['kegiatan_peserta_id' => $pI->id, 'status' => 'alpa']);
+        Kehadiran::create(['kegiatan_peserta_id' => $pL->id, 'status' => 'hadir']);
+
+        $res = $this->actingAs($op)->get('/absensi/rekap/export');
+        $res->assertOk();
+        $this->assertStringContainsString('text/csv', $res->headers->get('Content-Type'));
+        $isi = $res->streamedContent();
+        $this->assertStringContainsString('Semester', $isi);
+        $this->assertStringContainsString('Ekspor Ikut', $isi);
+        $this->assertStringContainsString('Ekspor Lain', $isi);
+
+        // Dengan filter semester: hanya yang cocok.
+        $smt = User::hitungSemester(2024);
+        $res = $this->actingAs($op)->get("/absensi/rekap/export?semester={$smt}");
+        $isi = $res->streamedContent();
+        $this->assertStringContainsString('Ekspor Ikut', $isi);
+        $this->assertStringNotContainsString('Ekspor Lain', $isi);
+
+        $this->actingAs(User::factory()->create())->get('/absensi/rekap/export')->assertForbidden();
+    }
 }
