@@ -1,12 +1,15 @@
 <script setup>
-import { Head, Link } from '@inertiajs/vue3'
+import { Head, Link, router } from '@inertiajs/vue3'
 import { computed } from 'vue'
+// import { router } from '@inertiajs/vue3'
 import Layout from '@/components/dashboard/Layout.vue'
 import Sparkline from '@/components/dashboard/Sparkline.vue'
 import GreetingBanner from '@/components/dashboard/GreetingBanner.vue'
 import DonutChart from '@/components/dashboard/DonutChart.vue'
 import ProdiBarChart from '@/components/dashboard/ProdiBarChart.vue'
 import HorizontalBarChart from '@/components/dashboard/HorizontalBarChart.vue'
+import FinancialChart from '@/components/dashboard/FinancialChart.vue'
+
 
 const props = defineProps({
     user: Object,
@@ -16,7 +19,35 @@ const props = defineProps({
     mahasiswaPerProdi: Array,
     statusDistribusi: Array,
     prokerPerDepartemen: Array,
+    keuangan: {
+    type: Object,
+    default: null,
+},
 })
+
+const changeKeuanganFilter = (key, value) => {
+    if (!props.keuangan) return
+
+    const params = {
+        mode: props.keuangan.mode,
+        tahun: props.keuangan.tahun,
+        [key]: value,
+    }
+
+    router.get('/dashboard', params, {
+        preserveState: true,
+        preserveScroll: true,
+        replace: true,
+    })
+}
+
+const formatMoney = (value) => {
+    return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        maximumFractionDigits: 0,
+    }).format(value || 0)
+}
 
 const spark = (key, fallback = []) => props.trends?.[key] ?? fallback
 
@@ -161,6 +192,137 @@ const quickActions = [
                 </div>
             </div>
         </div>
+
+
+        
+<!-- FINANCIAL STATISTICS -->
+<section v-if="keuangan" class="mt-4 space-y-4 xl:mt-5">
+
+    <!-- Header + Filter -->
+    <div class="dash-card p-4 xl:p-5">
+
+        <div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+
+            <div>
+                <div class="flex items-center gap-2">
+                    <span class="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_10px_#34d399]"></span>
+                    <h3 class="text-sm font-bold text-white xl:text-base">
+                        Statistik Keuangan
+                    </h3>
+                </div>
+
+                <p class="mt-1 text-[11px] text-white/35 xl:text-xs">
+                    Monitoring pemasukan dan pengeluaran organisasi.
+                </p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+
+                <!-- Mode -->
+                <select
+                    :value="keuangan.mode"
+                    @change="changeKeuanganFilter('mode', $event.target.value)"
+                    class="min-w-[125px] rounded-xl border border-white/10 bg-[#171725] px-3 py-2 text-xs text-white outline-none transition focus:border-violet-400/50"
+                >
+                    <option value="bulanan">Bulanan</option>
+                    <option value="tahunan">Tahunan</option>
+                </select>
+
+                <!-- Tahun: hanya untuk mode bulanan -->
+                <select
+                    v-if="keuangan.mode === 'bulanan'"
+                    :value="keuangan.tahun"
+                    @change="changeKeuanganFilter('tahun', $event.target.value)"
+                    class="min-w-[100px] rounded-xl border border-white/10 bg-[#171725] px-3 py-2 text-xs text-white outline-none transition focus:border-violet-400/50"
+                >
+                    <option
+                        v-for="tahun in keuangan.tahunTersedia"
+                        :key="tahun"
+                        :value="tahun"
+                    >
+                        {{ tahun }}
+                    </option>
+                </select>
+
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="mt-5 grid grid-cols-2 gap-3 xl:grid-cols-4">
+
+            <div class="rounded-xl border border-emerald-400/15 bg-emerald-400/[0.05] p-3 xl:p-4">
+                <p class="text-[10px] text-emerald-300/60 xl:text-xs">
+                    Total Pemasukan
+                </p>
+                <h4 class="mt-2 break-words text-sm font-bold text-emerald-400 xl:text-lg">
+                    {{ formatMoney(keuangan.ringkasan.masuk) }}
+                </h4>
+            </div>
+
+            <div class="rounded-xl border border-rose-400/15 bg-rose-400/[0.05] p-3 xl:p-4">
+                <p class="text-[10px] text-rose-300/60 xl:text-xs">
+                    Total Pengeluaran
+                </p>
+                <h4 class="mt-2 break-words text-sm font-bold text-rose-400 xl:text-lg">
+                    {{ formatMoney(keuangan.ringkasan.keluar) }}
+                </h4>
+            </div>
+
+            <div class="rounded-xl border border-cyan-400/15 bg-cyan-400/[0.05] p-3 xl:p-4">
+                <p class="text-[10px] text-cyan-300/60 xl:text-xs">
+                    Selisih Periode
+                </p>
+                <h4
+                    class="mt-2 break-words text-sm font-bold xl:text-lg"
+                    :class="keuangan.ringkasan.selisih >= 0 ? 'text-cyan-400' : 'text-rose-400'"
+                >
+                    {{ formatMoney(keuangan.ringkasan.selisih) }}
+                </h4>
+            </div>
+
+            <div class="rounded-xl border border-violet-400/15 bg-violet-400/[0.05] p-3 xl:p-4">
+                <p class="text-[10px] text-violet-300/60 xl:text-xs">
+                    Saldo Keseluruhan
+                </p>
+                <h4
+                    class="mt-2 break-words text-sm font-bold xl:text-lg"
+                    :class="keuangan.ringkasan.saldo >= 0 ? 'text-violet-400' : 'text-rose-400'"
+                >
+                    {{ formatMoney(keuangan.ringkasan.saldo) }}
+                </h4>
+            </div>
+
+        </div>
+
+        <!-- Financial Chart -->
+        <div class="mt-6">
+
+            <div class="mb-5 flex flex-wrap items-center justify-between gap-2">
+                <div>
+                    <h4 class="text-xs font-bold text-white xl:text-sm">
+                        Perbandingan Pemasukan & Pengeluaran
+                    </h4>
+
+                    <p class="mt-1 text-[10px] text-white/30">
+                        {{ keuangan.mode === 'bulanan'
+                            ? `Statistik bulanan tahun ${keuangan.tahun}`
+                            : 'Statistik tahunan seluruh transaksi'
+                        }}
+                    </p>
+                </div>
+
+                <span class="rounded-lg border border-white/10 bg-white/[0.03] px-2.5 py-1 font-mono text-[10px] text-white/40">
+                    {{ keuangan.mode === 'bulanan' ? '12 BULAN' : 'TAHUNAN' }}
+                </span>
+            </div>
+
+            <FinancialChart :items="keuangan.chartData" />
+
+        </div>
+
+    </div>
+
+</section>
 
         <!-- CHARTS: prodi (vertical bar) + status (donut) -->
         <div class="mt-4 grid grid-cols-1 gap-3 xl:mt-5 xl:grid-cols-3 xl:gap-5">
