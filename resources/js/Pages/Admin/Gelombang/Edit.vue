@@ -1,4 +1,4 @@
-<script setup>
+<!-- <script setup>
 import { Link, useForm } from '@inertiajs/vue3'
 import ModalPage from '@/components/dashboard/ModalPage.vue'
 
@@ -63,4 +63,4 @@ const submit = () => {
             </div>
         </form>
     </ModalPage>
-</template>
+</template> -->

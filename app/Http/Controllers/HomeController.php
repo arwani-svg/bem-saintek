@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Departemen;
 use App\Models\Informasi;
 use App\Models\ProgramKerja;
+use App\Models\Struktural;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -32,6 +33,80 @@ class HomeController extends Controller
         return Inertia::render('Home/Index', [
             'programs' => $programs,
             'informasis' => $informasis->values(),
+        ]);
+    }
+
+    public function struktural(Request $request)
+    {
+        $periods = Struktural::query()
+            ->select('periode')
+            ->distinct()
+            ->orderByDesc('periode')
+            ->pluck('periode');
+
+        $periode = $request->input('periode');
+        if (! $periode || ! $periods->contains($periode)) {
+            $periode = $periods->first();
+        }
+
+        $items = $periode
+            ? Struktural::with(['user', 'departemen'])
+                ->where('periode', $periode)
+                ->orderBy('urutan')
+                ->orderBy('jabatan')
+                ->get()
+            : collect();
+
+        $format = fn (Struktural $s) => [
+            'id' => $s->id,
+            'jabatan' => $s->jabatan,
+            'urutan' => $s->urutan,
+            'user' => [
+                'id' => $s->user?->id,
+                'name' => $s->user?->name,
+                'nim' => $s->user?->nim,
+                'prodi' => $s->user?->prodi,
+                'angkatan' => $s->user?->angkatan,
+                'jenis_kelamin' => $s->user?->jenis_kelamin,
+                'foto_url' => $s->user?->foto_url,
+            ],
+            'departemen' => $s->departemen ? [
+                'id' => $s->departemen->id,
+                'nama' => $s->departemen->nama,
+                'kepanjangan' => $s->departemen->kepanjangan,
+                'icon' => $s->departemen->icon,
+            ] : null,
+        ];
+
+        $pengurusHarian = $items
+            ->whereNull('departemen_id')
+            ->map($format)
+            ->values();
+
+        $departemens = $items
+            ->whereNotNull('departemen_id')
+            ->groupBy('departemen_id')
+            ->map(function ($group) use ($format) {
+                $departemen = $group->first()->departemen;
+
+                return [
+                    'id' => $departemen->id,
+                    'nama' => $departemen->nama,
+                    'kepanjangan' => $departemen->kepanjangan,
+                    'icon' => $departemen->icon,
+                    'deskripsi' => $departemen->deskripsi,
+                    'pengurus' => $group->map($format)->values(),
+                ];
+            })
+            ->sortBy('nama')
+            ->values();
+
+        return Inertia::render('Profile/Struktural', [
+            'periods' => $periods,
+            'selectedPeriode' => $periode,
+            'pengurusHarian' => $pengurusHarian,
+            'departemens' => $departemens,
+            'totalPengurus' => $items->count(),
         ]);
     }
 

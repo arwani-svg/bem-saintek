@@ -19,6 +19,7 @@ class RolesAndPermissionsSeeder extends Seeder
         'lihat-dashboard',
         'kelola-pengguna',
         'kelola-departemen',
+        'kelola-struktural',
         'kelola-proker',
         'kelola-informasi',
         'kelola-pendaftaran',
@@ -37,6 +38,7 @@ class RolesAndPermissionsSeeder extends Seeder
         'lihat-dashboard' => 'Akses masuk ke halaman dashboard.',
         'kelola-pengguna' => 'Buat, ubah, dan hapus akun user serta atur role.',
         'kelola-departemen' => 'Kelola data departemen BEM.',
+        'kelola-struktural' => 'Kelola data struktural, jabatan, periode, dan pengurus.',
         'kelola-proker' => 'Kelola program kerja tiap departemen.',
         'kelola-informasi' => 'Kelola berita, infografis, dan pengumuman.',
         'kelola-pendaftaran' => 'Kelola pendaftar pengurus dan hasil seleksi.',
@@ -61,6 +63,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'lihat-dashboard',
             'kelola-pengguna',
             'kelola-departemen',
+            'kelola-struktural',
             'kelola-proker',
             'kelola-informasi',
             'kelola-pendaftaran',
@@ -75,6 +78,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'lihat-dashboard',
             'kelola-pengguna',
             'kelola-departemen',
+            'kelola-struktural',
             'kelola-proker',
             'kelola-informasi',
             'kelola-pendaftaran',
@@ -87,6 +91,7 @@ class RolesAndPermissionsSeeder extends Seeder
         'sekretaris' => [
             'lihat-dashboard',
             'kelola-arsip',
+            'kelola-struktural',
             'kelola-informasi',
             'kelola-pendaftaran',
             'kelola-gelombang',
@@ -127,6 +132,14 @@ class RolesAndPermissionsSeeder extends Seeder
             $role = Role::where('name', $roleName)->first();
             if ($role && ! $role->hasPermissionTo('lihat-activity-log')) {
                 $role->givePermissionTo('lihat-activity-log');
+            }
+        }
+
+        // Permission baru untuk role lama yang sudah terlanjur dibuat.
+        foreach (['pengurus', 'ketua-bem', 'sekretaris'] as $roleName) {
+            $role = Role::where('name', $roleName)->first();
+            if ($role && ! $role->hasPermissionTo('kelola-struktural')) {
+                $role->givePermissionTo('kelola-struktural');
             }
         }
 

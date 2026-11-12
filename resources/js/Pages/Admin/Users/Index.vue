@@ -1,8 +1,11 @@
 <script setup>
 import { Head, Link, router } from '@inertiajs/vue3'
-import { reactive, ref, watch } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import Layout from '@/components/dashboard/Layout.vue'
 import ConfirmModal from '@/components/dashboard/ConfirmModal.vue'
+import Modal from '@/components/dashboard/Modal.vue'
+// import UserEditForm from './UserEditForm.vue'
+import UserForm from './UserForm.vue'
 
 const props = defineProps({
     users: Object,
@@ -86,6 +89,29 @@ const roleColors = {
     mahasiswa: 'bg-cyan-300/10 text-cyan-300',
     pengurus: 'bg-violet-300/10 text-violet-300',
 }
+// --- Modal State untuk Create & Edit ---
+const showModal = ref(false)
+const editingUser = ref(null)
+
+const modalTitle = computed(() => (editingUser.value ? 'Edit User' : 'Tambah User'))
+const modalSubtitle = computed(() =>
+    editingUser.value ? `Perbarui informasi ${editingUser.value.name}` : 'Buat akun baru untuk mahasiswa atau pengurus',
+)
+
+const openCreate = () => {
+    editingUser.value = null
+    showModal.value = true
+}
+
+const openEdit = (user) => {
+    editingUser.value = user
+    showModal.value = true
+}
+
+const closeModal = () => {
+    showModal.value = false
+    editingUser.value = null
+}
 </script>
 
 <template>
@@ -141,9 +167,9 @@ const roleColors = {
                 </div>
             </div>
             <div class="mt-4 flex flex-wrap items-center gap-2">
-                <Link href="/users/create" class="dash-btn-primary">
+                <button @click="openCreate" class="dash-btn-primary">
                     + Tambah User
-                </Link>
+                </button>
                 <button v-if="adaFilter()" @click="reset" class="dash-btn-ghost">
                     Reset
                 </button>
@@ -204,15 +230,9 @@ const roleColors = {
                             </td>
                             <td>
                                 <div class="flex items-center gap-1">
-                                    <Link :href="`/users/${u.id}`" class="dash-link-edit !text-cyan-300">
-                                        Lihat
-                                    </Link>
-                                    <Link :href="`/users/${u.id}/edit`" class="dash-link-edit">
-                                        Edit
-                                    </Link>
-                                    <button @click="askDeleteUser(u)" class="dash-link-delete">
-                                        Hapus
-                                    </button>
+                                    <Link :href="`/users/${u.id}`" class="dash-link-edit !text-cyan-300">Lihat</Link>
+                <button @click="openEdit(u)" class="dash-link-edit">Edit</button>
+                <button @click="askDeleteUser(u)" class="dash-link-delete">Hapus</button>
                                 </div>
                             </td>
                         </tr>
@@ -242,15 +262,27 @@ const roleColors = {
             </div>
         </div>
 
-        <ConfirmModal
-            :show="confirmOpen"
-            title="Hapus user?"
-            message="User yang dihapus tidak bisa dikembalikan. Yakin lanjut?"
-            :itemName="deleteTarget?.name || ''"
-            :processing="deleting"
-            @cancel="confirmOpen = false"
-            @update:show="confirmOpen = $event"
-            @confirm="confirmDeleteUser"
-        />
+        <!-- Pop-up Create / Edit User Modal -->
+        <!-- Pop-up Modal untuk Create / Edit User -->
+        <Modal
+            :show="showModal"
+            :title="modalTitle"
+            :subtitle="modalSubtitle"
+            eyebrow="SAINTEK.OS // USERS"
+            size="xl"
+            @close="closeModal"
+            @update:show="showModal = $event"
+        >
+            <UserForm
+                :key="editingUser?.id || 'create-user'"
+                :user="editingUser"
+                :prodiList="prodiList"
+                :statusList="statusList"
+                :keloasList="keloasList"
+                :rolesList="rolesList"
+                @success="closeModal"
+                @cancel="closeModal"
+            />
+        </Modal>
     </Layout>
 </template>

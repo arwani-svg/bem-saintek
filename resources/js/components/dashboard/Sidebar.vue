@@ -110,6 +110,13 @@ const groups = computed(() => {
                     icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />',
                 },
                 {
+                    label: 'Struktural',
+                    href: '/struktural',
+                    key: 'struktural',
+                    perm: 'kelola-struktural',
+                    icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />',
+                },
+                {
                     label: 'Program Kerja',
                     href: '/proker',
                     key: 'proker',
@@ -203,41 +210,41 @@ const toggleDropdown = (menu) => {
     <aside
         :class="[
             open ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
-            collapsed ? 'lg:w-20' : 'lg:w-72',
+            collapsed ? 'lg:w-20' : 'lg:w-64 xl:w-72',
         ]"
-        class="fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-white/10 bg-[#05080f]/95 backdrop-blur-xl transition-[width,transform] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
+        class="fixed inset-y-0 left-0 z-50 flex w-80 flex-col border-r border-white/10 bg-[#05080f]/95 backdrop-blur-xl transition-[width,transform] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
     >
         <!-- Logo -->
         <div
-            class="flex items-center gap-3 border-b border-white/5 px-5 py-5"
+            class="flex items-center gap-3 border-b border-white/5 px-4 py-4 lg:px-5 lg:py-5"
             :class="collapsed ? 'lg:justify-center lg:px-3' : ''"
         >
-            <div class="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-cyan-300/20 bg-cyan-300/5">
+            <div class="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-cyan-300/20 bg-cyan-300/5 lg:h-10 lg:w-10">
                 <div class="absolute inset-0 bg-cyan-300/10 blur-xl"></div>
-                <img :src="'/images/saintek.png'" alt="BEM Saintek" class="relative h-10 w-10 object-contain" />
+                <img :src="'/images/saintek.png'" alt="BEM Saintek" class="relative h-9 w-9 object-contain lg:h-10 lg:w-10" />
             </div>
             <div :class="collapsed ? 'lg:hidden' : ''" class="transition-opacity duration-200">
-                <div class="font-display font-bold tracking-tight text-white">
+                <div class="font-display text-sm font-bold tracking-tight text-white lg:text-base">
                     BEM <span class="text-cyan-300">SAINTEK</span>
                 </div>
-                <div class="font-mono text-[8px] uppercase tracking-[.3em] text-white/30">
+                <div class="font-mono text-[7px] uppercase tracking-[.3em] text-white/30 lg:text-[8px]">
                     Admin Terminal
                 </div>
             </div>
         </div>
 
         <!-- Menu (overflow dibuka saat collapsed agar tooltip tidak kepotong) -->
-        <nav class="saintek-scroll flex-1 space-y-6 overflow-y-auto p-4" :class="collapsed ? 'lg:overflow-visible lg:p-3' : ''">
+        <nav class="saintek-scroll flex-1 space-y-5 overflow-y-auto p-3 xl:space-y-6 xl:p-4" :class="collapsed ? 'lg:overflow-visible lg:p-3' : ''">
             <div v-for="group in groups" :key="group.label">
                 <p
-                    class="mb-2 px-4 font-mono text-[10px] tracking-[.3em] text-white/25 transition-all"
+                    class="mb-2 px-3 font-mono text-[9px] tracking-[.25em] text-white/25 transition-all xl:px-4 xl:text-[10px] xl:tracking-[.3em]"
                     :class="collapsed ? 'lg:hidden' : ''"
                 >
                     {{ group.label }}
                 </p>
                 <!-- divider mungil saat collapsed -->
                 <div v-if="collapsed" class="mx-auto mb-2 hidden h-px w-8 bg-white/10 lg:block"></div>
-                <div class="space-y-1.5">
+                <div class="space-y-1">
                     <template v-for="menu in group.menus" :key="menu.key">
                         <!-- Menu dropdown (punya anak) -->
                         <div v-if="menu.children">
@@ -248,7 +255,7 @@ const toggleDropdown = (menu) => {
                                         ? 'border-cyan-300/30 bg-cyan-300/10 text-white shadow-[0_0_24px_rgba(34,211,238,0.12)]'
                                         : 'border-transparent text-white/45 hover:border-white/5 hover:bg-white/[0.04] hover:text-white',
                                     collapsed ? 'lg:justify-center lg:px-0' : '',
-                                    'group relative flex w-full items-center gap-3 rounded-xl border px-4 py-2.5 text-sm font-medium transition-all duration-200',
+                                    'group relative flex w-full items-center gap-3 rounded-xl border px-3 py-2 text-[13px] font-medium transition-all duration-200 xl:px-4 xl:py-2.5 xl:text-sm',
                                 ]"
                             >
                                 <svg
@@ -309,7 +316,7 @@ const toggleDropdown = (menu) => {
                                     ? 'border-cyan-300/30 bg-cyan-300/10 text-white shadow-[0_0_24px_rgba(34,211,238,0.12)]'
                                     : 'border-transparent text-white/45 hover:border-white/5 hover:bg-white/[0.04] hover:text-white',
                                 collapsed ? 'lg:justify-center lg:px-0' : '',
-                                'group relative flex items-center gap-3 rounded-xl border px-4 py-2.5 text-sm font-medium transition-all duration-200',
+                                'group relative flex items-center gap-3 rounded-xl border px-3 py-2 text-[13px] font-medium transition-all duration-200 xl:px-4 xl:py-2.5 xl:text-sm',
                             ]"
                         >
                             <svg
@@ -347,11 +354,11 @@ const toggleDropdown = (menu) => {
         </nav>
 
         <!-- Bawah: user + lihat website -->
-        <div class="space-y-3 border-t border-white/5 p-4" :class="collapsed ? 'lg:p-3' : ''">
+        <div class="space-y-2 border-t border-white/5 p-3 xl:space-y-3 xl:p-4" :class="collapsed ? 'lg:p-3' : ''">
             <a
                 href="/"
                 :class="collapsed ? 'lg:justify-center lg:px-0' : ''"
-                class="group relative flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 font-mono text-[11px] tracking-widest text-white/50 transition hover:border-cyan-300/30 hover:text-cyan-300"
+                class="group relative flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 font-mono text-[10px] tracking-widest text-white/50 transition hover:border-cyan-300/30 hover:text-cyan-300 xl:px-4 xl:py-2.5 xl:text-[11px]"
             >
                 <span :class="collapsed ? 'lg:hidden' : ''">← LIHAT WEBSITE</span>
                 <span v-if="collapsed" class="hidden text-sm lg:block">↗</span>
@@ -362,29 +369,29 @@ const toggleDropdown = (menu) => {
                     Lihat Website
                 </span>
             </a>
-            <Link
+            <!-- <Link
                 v-if="user"
                 href="/profil"
                 @click="$emit('close')"
                 :class="collapsed ? 'lg:justify-center lg:px-2' : ''"
-                class="group relative flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.02] px-4 py-3 transition hover:border-cyan-300/25 hover:bg-cyan-300/5"
+                class="group relative flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.02] px-3 py-2.5 transition hover:border-cyan-300/25 hover:bg-cyan-300/5 xl:px-4 xl:py-3"
                 title="Lihat profil saya"
             >
                 <img
                     v-if="user.foto_url"
                     :src="user.foto_url"
                     :alt="user.name"
-                    class="h-9 w-9 shrink-0 rounded-full border border-white/20 object-cover"
+                    class="h-8 w-8 shrink-0 rounded-full border border-white/20 object-cover xl:h-9 xl:w-9"
                 />
                 <div
                     v-else
-                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 to-violet-500 text-sm font-bold text-black"
+                    class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 to-violet-500 text-xs font-bold text-black xl:h-9 xl:w-9 xl:text-sm"
                 >
                     {{ (user.name || '?').charAt(0).toUpperCase() }}
                 </div>
                 <div :class="collapsed ? 'lg:hidden' : ''" class="min-w-0 flex-1">
-                    <p class="truncate text-sm font-semibold text-white">{{ user.name }}</p>
-                    <p class="font-mono text-[10px] uppercase tracking-widest text-cyan-300/70">{{ user.role }}</p>
+                    <p class="truncate text-xs font-semibold text-white xl:text-sm">{{ user.name }}</p>
+                    <p class="font-mono text-[9px] uppercase tracking-widest text-cyan-300/70 xl:text-[10px]">{{ user.role }}</p>
                 </div>
                 <svg
                     :class="collapsed ? 'lg:hidden' : ''"
@@ -402,11 +409,11 @@ const toggleDropdown = (menu) => {
                     {{ user.name }}
                     <span class="block font-mono text-[10px] font-normal uppercase tracking-widest text-cyan-300/70">{{ user.role }}</span>
                 </span>
-            </Link>
+            </Link> -->
             <button
                 @click="logout"
                 :class="collapsed ? 'lg:justify-center lg:px-0' : ''"
-                class="group relative flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-rose-300/20 bg-rose-300/5 px-4 py-2.5 text-sm font-semibold text-rose-300 transition hover:border-rose-300/40 hover:bg-rose-300/10 active:scale-[0.98]"
+                class="group relative flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-rose-300/20 bg-rose-300/5 px-3 py-2 text-xs font-semibold text-rose-300 transition hover:border-rose-300/40 hover:bg-rose-300/10 active:scale-[0.98] xl:px-4 xl:py-2.5 xl:text-sm"
             >
                 <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />

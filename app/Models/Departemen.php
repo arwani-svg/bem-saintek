@@ -19,4 +19,9 @@ class Departemen extends Model
     {
         return $this->hasMany(ProgramKerja::class);
     }
+
+    public function strukturals(): HasMany
+    {
+        return $this->hasMany(Struktural::class);
+    }
 }

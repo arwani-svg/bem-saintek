@@ -90,6 +90,11 @@ class DepartemenController extends Controller
                 ->with('error', "Departemen {$departemen->nama} masih memiliki program kerja. Hapus/pindahkan prokernya dulu.");
         }
 
+        if ($departemen->strukturals()->exists()) {
+            return redirect()->route('departemen.index')
+                ->with('error', "Departemen {$departemen->nama} masih dipakai di data struktural. Pindahkan/hapus data strukturalnya dulu.");
+        }
+
         $nama = $departemen->nama;
         $departemen->delete();
 

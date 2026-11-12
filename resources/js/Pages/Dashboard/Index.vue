@@ -131,88 +131,89 @@ const quickActions = [
         <GreetingBanner :userName="user.name" />
 
         <!-- STAT CARDS (desain/dashboard.html) -->
-        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4 xl:gap-5">
             <div
                 v-for="stat in statCards"
                 :key="stat.label"
-                class="dash-card p-5 transition-all duration-300 hover:-translate-y-1 hover:border-violet-500/30"
+                class="dash-card p-4 transition-all duration-300 hover:-translate-y-1 hover:border-violet-500/30 xl:p-5"
             >
                 <div class="flex items-start justify-between">
                     <div>
-                        <p class="mb-2 text-xs text-white/40">{{ stat.label }}</p>
-                        <h3 class="text-2xl font-bold text-white">{{ stat.value }}</h3>
-                        <div class="mt-2 flex items-center gap-1.5">
+                        <p class="mb-1.5 text-[11px] text-white/40 xl:mb-2 xl:text-xs">{{ stat.label }}</p>
+                        <h3 class="text-xl font-bold text-white xl:text-2xl">{{ stat.value }}</h3>
+                        <div class="mt-1.5 flex items-center gap-1.5 xl:mt-2">
                             <span
-                                class="text-xs font-medium"
+                                class="text-[11px] font-medium xl:text-xs"
                                 :class="deltaPct(stat.trend).up ? 'text-emerald-400' : 'text-rose-400'"
                             >
                                 {{ deltaPct(stat.trend).up ? '↑' : '↓' }} {{ deltaPct(stat.trend).text }}
                             </span>
-                            <span class="text-[11px] text-white/25">vs last month</span>
+                            <span class="text-[10px] text-white/25 xl:text-[11px]">vs last month</span>
                         </div>
                     </div>
-                    <div :class="[stat.iconBox, 'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl']">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" v-html="stat.icon" />
+                    <div :class="[stat.iconBox, 'flex h-9 w-9 shrink-0 items-center justify-center rounded-xl xl:h-10 xl:w-10']">
+                        <svg class="h-4 w-4 xl:h-5 xl:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" v-html="stat.icon" />
                     </div>
                 </div>
-                <div class="mt-4 h-14">
-                    <Sparkline :data="stat.trend" :stroke="stat.color" :width="220" :height="56" />
+                <div class="mt-3 h-12 xl:mt-4 xl:h-14">
+                    <Sparkline :data="stat.trend" :stroke="stat.color" :width="200" :height="48" class="xl:hidden" />
+                    <Sparkline :data="stat.trend" :stroke="stat.color" :width="220" :height="56" class="hidden xl:block" />
                 </div>
             </div>
         </div>
 
         <!-- CHARTS: prodi (vertical bar) + status (donut) -->
-        <div class="grid grid-cols-1 gap-5 xl:grid-cols-3">
-            <div class="dash-card mt-5 p-5 xl:col-span-2">
-                <div class="mb-5">
-                    <h3 class="font-bold text-white">Mahasiswa per Prodi</h3>
-                    <p class="mt-1 text-xs text-white/35">Perbandingan angka antar prodi.</p>
+        <div class="mt-4 grid grid-cols-1 gap-3 xl:mt-5 xl:grid-cols-3 xl:gap-5">
+            <div class="dash-card p-4 xl:col-span-2 xl:p-5">
+                <div class="mb-4 xl:mb-5">
+                    <h3 class="text-sm font-bold text-white xl:text-base">Mahasiswa per Prodi</h3>
+                    <p class="mt-1 text-[11px] text-white/35 xl:text-xs">Perbandingan angka antar prodi.</p>
                 </div>
                 <ProdiBarChart :items="mahasiswaPerProdi ?? []" />
             </div>
 
-            <div class="dash-card mt-5 p-5">
-                <div class="mb-5">
-                    <h3 class="font-bold text-white">Status Mahasiswa</h3>
-                    <p class="mt-1 text-xs text-white/35">Distribusi status mahasiswa.</p>
+            <div class="dash-card p-4 xl:p-5">
+                <div class="mb-4 xl:mb-5">
+                    <h3 class="text-sm font-bold text-white xl:text-base">Status Mahasiswa</h3>
+                    <p class="mt-1 text-[11px] text-white/35 xl:text-xs">Distribusi status mahasiswa.</p>
                 </div>
                 <DonutChart :segments="statusDistribusi ?? []" center-label="Mahasiswa" />
             </div>
         </div>
 
         <!-- LOWER: proker per departemen (horizontal bar) + aksi cepat -->
-        <div class="grid grid-cols-1 gap-5 xl:grid-cols-3">
-            <div class="dash-card mt-5 p-5 xl:col-span-2">
-                <div class="mb-5 flex flex-wrap items-center justify-between gap-2">
+        <div class="mt-4 grid grid-cols-1 gap-3 xl:mt-5 xl:grid-cols-3 xl:gap-5">
+            <div class="dash-card p-4 xl:col-span-2 xl:p-5">
+                <div class="mb-4 flex flex-wrap items-center justify-between gap-2 xl:mb-5">
                     <div>
-                        <h3 class="font-bold text-white">Program Kerja per Departemen</h3>
-                        <p class="mt-1 text-xs text-white/35">Jumlah proker tiap departemen.</p>
+                        <h3 class="text-sm font-bold text-white xl:text-base">Program Kerja per Departemen</h3>
+                        <p class="mt-1 text-[11px] text-white/35 xl:text-xs">Jumlah proker tiap departemen.</p>
                     </div>
-                    <p v-if="trendLabels?.length" class="font-mono text-[10px] tracking-widest text-white/25">
+                    <p v-if="trendLabels?.length" class="font-mono text-[9px] tracking-widest text-white/25 xl:text-[10px]">
                         {{ trendLabels[0] }} — {{ trendLabels[trendLabels.length - 1] }}
                     </p>
                 </div>
                 <HorizontalBarChart :items="prokerPerDepartemen ?? []" />
             </div>
 
-            <div class="dash-card mt-5 p-5">
-                <div class="mb-5">
-                    <h3 class="font-bold text-white">Aksi Cepat</h3>
-                    <p class="mt-1 text-xs text-white/35">Jalan pintas ke halaman yang paling sering dipakai.</p>
+            <div class="dash-card p-4 xl:p-5">
+                <div class="mb-4 xl:mb-5">
+                    <h3 class="text-sm font-bold text-white xl:text-base">Aksi Cepat</h3>
+                    <p class="mt-1 text-[11px] text-white/35 xl:text-xs">Jalan pintas ke halaman yang paling sering dipakai.</p>
                 </div>
-                <div class="grid grid-cols-1 gap-3">
+                <div class="grid grid-cols-1 gap-2.5 xl:gap-3">
                     <Link
                         v-for="action in quickActions"
                         :key="action.href + action.title"
                         :href="action.href"
-                        :class="[action.hover, 'group flex items-center gap-4 rounded-xl border border-white/10 bg-white/[0.02] p-3.5 transition-all hover:bg-white/[0.04]']"
+                        :class="[action.hover, 'group flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.02] p-3 transition-all hover:bg-white/[0.04] xl:gap-4 xl:p-3.5']"
                     >
-                        <div :class="[action.glow, 'flex h-11 w-11 shrink-0 items-center justify-center rounded-xl']">
-                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" v-html="action.icon" />
+                        <div :class="[action.glow, 'flex h-9 w-9 shrink-0 items-center justify-center rounded-xl xl:h-11 xl:w-11']">
+                            <svg class="h-4 w-4 xl:h-5 xl:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" v-html="action.icon" />
                         </div>
                         <div class="min-w-0">
-                            <p class="text-sm font-semibold text-white transition-colors group-hover:text-cyan-300">{{ action.title }}</p>
-                            <p class="truncate text-xs text-white/35">{{ action.desc }}</p>
+                            <p class="text-xs font-semibold text-white transition-colors group-hover:text-cyan-300 xl:text-sm">{{ action.title }}</p>
+                            <p class="truncate text-[11px] text-white/35 xl:text-xs">{{ action.desc }}</p>
                         </div>
                         <span class="ml-auto shrink-0 text-white/20 transition-all group-hover:translate-x-1 group-hover:text-cyan-300">→</span>
                     </Link>

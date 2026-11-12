@@ -112,6 +112,12 @@ class User extends Authenticatable
         return $this->hasRole('mahasiswa') || $this->role === 'mahasiswa';
     }
 
+    /** Riwayat jabatan struktural user (per periode). */
+    public function strukturals(): HasMany
+    {
+        return $this->hasMany(Struktural::class);
+    }
+
     /** Tagihan iuran di mana user ini terdaftar sebagai peserta. */
     public function iuranPesertas(): HasMany
     {

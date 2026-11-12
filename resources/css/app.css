@@ -620,3 +620,345 @@ body {
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
 }
+
+/* ===== Halaman Struktural publik (mengikuti desain struktural-v2) ===== */
+.bem-saintek .struct-hero-visual {
+    position: relative;
+    isolation: isolate;
+}
+
+.bem-saintek .struct-hero-ambient {
+    position: absolute;
+    inset: -10% -6% -6% -6%;
+    z-index: -3;
+    border-radius: 50%;
+    background:
+        radial-gradient(50% 50% at 48% 46%, rgba(34, 211, 238, 0.2), transparent 70%),
+        radial-gradient(58% 54% at 72% 68%, rgba(139, 92, 246, 0.16), transparent 72%),
+        radial-gradient(46% 46% at 22% 70%, rgba(59, 130, 246, 0.14), transparent 72%);
+    filter: blur(72px);
+    animation: structHaloBreathe 8s ease-in-out infinite alternate;
+}
+
+@keyframes structHaloBreathe {
+    from { transform: scale(1) translate3d(0, 0, 0); opacity: 0.55; }
+    to { transform: scale(1.08) translate3d(-2%, -2%, 0); opacity: 1; }
+}
+
+.bem-saintek .struct-hero-stage {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 612 / 408;
+    z-index: 0;
+}
+
+.bem-saintek .struct-hero-stage > * {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.bem-saintek .struct-hero-orbit {
+    position: absolute;
+    z-index: -2;
+    inset: 8% 6% 8% 6%;
+    border-radius: 50%;
+    border: 1px solid rgba(103, 232, 249, 0.16);
+    transform: rotate(-3deg);
+    animation: structRingFloat 10s ease-in-out infinite alternate;
+}
+
+.bem-saintek .struct-hero-orbit::after {
+    content: '';
+    position: absolute;
+    top: 8%;
+    right: 12%;
+    width: 6px;
+    height: 6px;
+    border-radius: 99px;
+    background: #67e8f9;
+    box-shadow: 0 0 14px 3px rgba(103, 232, 249, 0.85);
+}
+
+@keyframes structRingFloat {
+    from { transform: rotate(-3deg) translate3d(0, 0, 0); }
+    to { transform: rotate(-1deg) translate3d(1.5%, -1%, 0); }
+}
+
+.bem-saintek .struct-hero-base {
+    position: absolute;
+    left: 50%;
+    bottom: -4%;
+    transform: translateX(-50%);
+    width: 58%;
+    height: 56px;
+    z-index: -1;
+    border-radius: 50%;
+    background: radial-gradient(50% 50% at 50% 50%, rgba(34, 211, 238, 0.38), rgba(139, 92, 246, 0.16) 55%, transparent 72%);
+    filter: blur(24px);
+    animation: structBasePulse 6s ease-in-out infinite alternate;
+}
+
+@keyframes structBasePulse {
+    from { opacity: 0.55; transform: translateX(-50%) scaleX(0.9); }
+    to { opacity: 1; transform: translateX(-50%) scaleX(1.1); }
+}
+
+.bem-saintek .struct-hero-aura-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    filter: blur(32px) saturate(1.9) brightness(1.3);
+    opacity: 0.85;
+    mix-blend-mode: screen;
+    transform: scale(1.05);
+    animation: structAuraPulse 5.5s ease-in-out infinite alternate;
+    will-change: transform, opacity;
+}
+
+@keyframes structAuraPulse {
+    from { opacity: 0.5; transform: scale(1.02); }
+    to { opacity: 1; transform: scale(1.1); }
+}
+
+.bem-saintek .struct-hero-aura-wide-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    filter: blur(64px) saturate(1.5) brightness(1.05);
+    opacity: 0.6;
+    mix-blend-mode: screen;
+    transform: scale(1.16);
+    animation: structAuraWide 9s ease-in-out infinite alternate;
+    will-change: transform, opacity;
+}
+
+@keyframes structAuraWide {
+    from { opacity: 0.32; transform: scale(1.11); }
+    to { opacity: 0.78; transform: scale(1.22); }
+}
+
+.bem-saintek .struct-hero-rays {
+    overflow: hidden;
+    mix-blend-mode: screen;
+    opacity: 0.5;
+    -webkit-mask-image: radial-gradient(ellipse 68% 68% at 50% 50%, #000 20%, rgba(0, 0, 0, 0.3) 55%, transparent 82%);
+    mask-image: radial-gradient(ellipse 68% 68% at 50% 50%, #000 20%, rgba(0, 0, 0, 0.3) 55%, transparent 82%);
+}
+
+.bem-saintek .struct-hero-rays-spin {
+    position: absolute;
+    inset: -35%;
+    background: conic-gradient(from 0deg at 50% 50%,
+        rgba(34, 211, 238, 0) 0deg,
+        rgba(34, 211, 238, 0.55) 10deg,
+        rgba(139, 92, 246, 0) 26deg,
+        rgba(139, 92, 246, 0) 120deg,
+        rgba(59, 130, 246, 0.45) 132deg,
+        rgba(139, 92, 246, 0) 150deg,
+        rgba(139, 92, 246, 0) 250deg,
+        rgba(34, 211, 238, 0.45) 262deg,
+        rgba(139, 92, 246, 0) 282deg,
+        rgba(34, 211, 238, 0) 360deg);
+    filter: blur(26px);
+    animation: structRaySpin 40s linear infinite;
+}
+
+@keyframes structRaySpin {
+    to { transform: rotate(360deg); }
+}
+
+.bem-saintek .struct-hero-img {
+    object-fit: contain;
+    object-position: center;
+    filter:
+        drop-shadow(0 0 8px rgba(34, 211, 238, 0.65))
+        drop-shadow(0 0 22px rgba(34, 211, 238, 0.42))
+        drop-shadow(0 0 52px rgba(139, 92, 246, 0.34))
+        drop-shadow(0 0 110px rgba(59, 130, 246, 0.26));
+    animation: structSilhouetteFloat 7s ease-in-out infinite alternate;
+    transition: filter 0.6s ease;
+    will-change: transform;
+}
+
+@keyframes structSilhouetteFloat {
+    from { transform: translateY(0) scale(1); }
+    to { transform: translateY(-8px) scale(1.015); }
+}
+
+.bem-saintek .struct-hero-visual:hover .struct-hero-img {
+    filter:
+        drop-shadow(0 0 12px rgba(103, 232, 249, 0.85))
+        drop-shadow(0 0 34px rgba(34, 211, 238, 0.55))
+        drop-shadow(0 0 78px rgba(139, 92, 246, 0.42))
+        drop-shadow(0 0 150px rgba(59, 130, 246, 0.32));
+}
+
+.bem-saintek .struct-hero-shine {
+    overflow: hidden;
+    mix-blend-mode: screen;
+    -webkit-mask-image: radial-gradient(ellipse 62% 72% at 50% 46%, #000 26%, transparent 84%);
+    mask-image: radial-gradient(ellipse 62% 72% at 50% 46%, #000 26%, transparent 84%);
+}
+
+.bem-saintek .struct-hero-shine-sweep {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 38%, rgba(255, 255, 255, 0.3) 50%, transparent 62%);
+    transform: translateX(-130%);
+    animation: structHeroShine 7s ease-in-out infinite;
+}
+
+@keyframes structHeroShine {
+    0%, 60% { transform: translateX(-130%); }
+    90%, 100% { transform: translateX(130%); }
+}
+
+.bem-saintek .struct-hero-chip {
+    animation: structChipFloat 6s ease-in-out infinite alternate;
+}
+
+.bem-saintek .struct-hero-chip:nth-of-type(2) {
+    animation-delay: 1.2s;
+}
+
+@keyframes structChipFloat {
+    from { transform: translateY(0); }
+    to { transform: translateY(-9px); }
+}
+
+/* Bingkai kartu pengurus */
+.bem-saintek .struct-frame {
+    position: relative;
+    height: 100%;
+    border-radius: 1.1rem;
+    padding: 1.5px;
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.04) 30%, rgba(255, 255, 255, 0.02) 70%, rgba(103, 232, 249, 0.14));
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease, background 0.4s ease;
+}
+
+.bem-saintek .struct-frame:hover {
+    transform: translateY(-7px);
+    background: linear-gradient(160deg, rgba(103, 232, 249, 0.65), rgba(103, 232, 249, 0.12) 35%, rgba(139, 92, 246, 0.18) 75%, rgba(103, 232, 249, 0.4));
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5), 0 0 55px rgba(34, 211, 238, 0.14);
+}
+
+.bem-saintek .struct-frame-inner {
+    height: 100%;
+    border-radius: calc(1.1rem - 1.5px);
+    overflow: hidden;
+    background: #0a0f1a;
+}
+
+.bem-saintek .struct-frame::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 12%;
+    right: 12%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(103, 232, 249, 0.7), transparent);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: 2;
+}
+
+.bem-saintek .struct-frame:hover::before {
+    opacity: 1;
+}
+
+.bem-saintek .struct-photo-wrap {
+    position: relative;
+    overflow: hidden;
+}
+
+.bem-saintek img.struct-photo {
+    width: 100%;
+    aspect-ratio: 33 / 36;
+    object-fit: cover;
+    object-position: center top;
+    background: #0a0f1a;
+    filter: grayscale(45%) brightness(0.92);
+    transition: filter 0.7s ease, transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+    display: block;
+}
+
+.bem-saintek img.struct-photo--dept {
+    aspect-ratio: 33 / 30;
+}
+
+.bem-saintek .struct-photo-fallback {
+    width: 100%;
+    aspect-ratio: 33 / 36;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(145deg, rgba(34, 211, 238, 0.12), #0a0f1a 55%, rgba(139, 92, 246, 0.12));
+}
+
+.bem-saintek .struct-frame:hover .struct-photo {
+    filter: grayscale(0) brightness(1);
+    transform: scale(1.05);
+}
+
+.bem-saintek .struct-shine {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.16) 50%, transparent 60%);
+    transform: translateX(-110%);
+}
+
+.bem-saintek .struct-frame:hover .struct-shine {
+    transform: translateX(110%);
+    transition: transform 0.9s ease;
+}
+
+.bem-saintek .struct-photo-fade {
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 45%;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(to top, rgba(3, 5, 10, 0.85), transparent);
+}
+
+.bem-saintek .struct-members {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.bem-saintek .struct-members.open {
+    grid-template-rows: 1fr;
+}
+
+.bem-saintek .struct-members-inner {
+    overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .bem-saintek .struct-hero-ambient,
+    .bem-saintek .struct-hero-orbit,
+    .bem-saintek .struct-hero-base,
+    .bem-saintek .struct-hero-rays-spin,
+    .bem-saintek .struct-hero-aura-img,
+    .bem-saintek .struct-hero-aura-wide-img,
+    .bem-saintek .struct-hero-img,
+    .bem-saintek .struct-hero-shine-sweep,
+    .bem-saintek .struct-hero-chip {
+        animation: none !important;
+    }
+
+    .bem-saintek .struct-frame:hover {
+        transform: none;
+    }
+}
+
+.bem-saintek .struct-photo-fallback--dept {
+    aspect-ratio: 33 / 30;
+}

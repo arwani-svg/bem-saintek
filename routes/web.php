@@ -15,6 +15,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProgramKerjaController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RolePermissionController;
+use App\Http\Controllers\StrukturalController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -35,7 +36,7 @@ Route::get('/information/{slug}', [HomeController::class, 'informasiShow'])->nam
 Route::get('/about', fn () => inertia('About'));
 
 // Profile Routes
-Route::get('/profile/struktural', fn () => inertia('Profile/Struktural'));
+Route::get('/profile/struktural', [HomeController::class, 'struktural'])->name('struktural.public');
 Route::get('/profile/visi-misi', fn () => inertia('Profile/VisiMisi'));
 Route::get('/profile/sejarah', fn () => inertia('Profile/Sejarah'));
 Route::get('/profile/hima', fn () => inertia('Profile/Hima'))->name('hima.index');
@@ -99,6 +100,14 @@ Route::middleware('auth')->group(function () {
     // yang merusak implicit binding Departemen $departemen di controller.
     Route::middleware('permission:kelola-departemen')->group(function () {
         Route::resource('departemen', DepartemenController::class)->except(['show'])->parameters(['departemen' => 'departemen']);
+    });
+
+    // Struktural kepengurusan: relasi user + departemen + periode.
+    Route::middleware('permission:kelola-struktural')->group(function () {
+        Route::get('/struktural', [StrukturalController::class, 'index'])->name('struktural.index');
+        Route::post('/struktural', [StrukturalController::class, 'store'])->name('struktural.store');
+        Route::match(['put', 'patch'], '/struktural/{struktural}', [StrukturalController::class, 'update'])->name('struktural.update');
+        Route::delete('/struktural/{struktural}', [StrukturalController::class, 'destroy'])->name('struktural.destroy');
     });
     Route::middleware('permission:kelola-proker')->group(function () {
         Route::resource('proker', ProgramKerjaController::class)->except(['show']);

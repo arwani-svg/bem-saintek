@@ -1,8 +1,8 @@
 <script setup>
 import { Head } from '@inertiajs/vue3'
 import Layout from '@/components/dashboard/Layout.vue'
-import ProfileDetail from '@/components/dashboard/ProfileDetail.vue'
-import RiwayatUser from '@/components/dashboard/RiwayatUser.vue'
+import ProfileDetail from '@/components/dashboard/profile/ProfileDetail.vue'
+import RiwayatUser from '@/components/dashboard/profile/RiwayatUser.vue'
 
 const props = defineProps({
     profile: Object,
@@ -33,7 +33,7 @@ const props = defineProps({
             :prestasiNote="canEditPrestasi ? '' : 'Prestasi hanya bisa diubah pengurus — hubungi admin bila ada pembaruan.'"
         />
 
-        <div class="mt-6">
+        <div class="mt-4 xl:mt-6">
             <RiwayatUser
                 :riwayatKegiatan="riwayatKegiatan"
                 :tagihanIuran="tagihanIuran"

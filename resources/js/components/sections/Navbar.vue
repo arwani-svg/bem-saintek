@@ -4,6 +4,11 @@ import { Link, usePage } from '@inertiajs/vue3'
 
 const page = usePage()
 const navDepartemens = computed(() => page.props.navDepartemens ?? [])
+// Mengambil data props dari Inertia
+
+// mengambil data props dari inertia untuk user 
+// const user = computed(() => page.props.auth.user ?? [])
+const user = computed(() => page.props.auth?.user);
 
 const isOpen = ref(false)
 const isProfileOpen = ref(false)
@@ -307,7 +312,7 @@ onUnmounted(() => {
 
                 </div>
 
-                <a
+                <!-- <a
                     href="/login"
                     class="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-full bg-white text-black text-xs font-bold hover:bg-cyan-300 transition"
                 >
@@ -315,7 +320,38 @@ onUnmounted(() => {
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M7 7h10v10" />
                     </svg>
-                </a>
+                </a> -->
+
+                <!-- Bagian Kanan: Logika Percabangan Login / Nama User -->
+        <div class="flex items-center gap-4">
+            <!-- JIKA USER SUDAH LOGIN (Tampilkan Nama & Avatar/Menu) -->
+            <div v-if="user" class="hidden sm:flex items-center gap-3">
+                <span class="text-xs font-bold text-gray-300">
+                    Halo, {{ user.name }}
+                </span>
+                
+                <!-- Tombol Logout atau Link ke Dashboard -->
+                <Link
+                    href="/dashboard"
+                    class="px-4 py-2 rounded-full bg-cyan-500 text-black text-xs font-bold hover:bg-cyan-400 transition"
+                >
+                    Dashboard
+                </Link>
+            </div>
+
+            <!-- JIKA USER BELUM LOGIN (Tampilkan Tombol Login seperti kode kamu) -->
+            <div v-else>
+                <Link
+                    href="/login"
+                    class="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-full bg-white text-black text-xs font-bold hover:bg-cyan-300 transition"
+                >
+                    Login
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M7 7h10v10" />
+                    </svg>
+                </Link>
+            </div>
+        </div>
 
                 <button
                     class="lg:hidden w-10 h-10 rounded-xl border border-white/10 flex items-center justify-center text-white"
