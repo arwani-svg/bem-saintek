@@ -58,13 +58,6 @@ class KegiatanController extends Controller
             'kegiatans' => $kegiatans,
             'filters' => $request->only(['search', 'status']),
             'statusList' => Kegiatan::STATUS,
-            'user' => Auth::user(),
-        ]);
-    }
-
-    public function create()
-    {
-        return Inertia::render('Admin/Kegiatan/Create', [
             'prodiList' => User::PRODI,
             'rolesList' => Role::orderBy('name')->pluck('name'),
             'semesterList' => User::SEMESTER_LIST,
@@ -471,14 +464,6 @@ class KegiatanController extends Controller
         $rows = collect($agregat)->sortBy([['poin', 'desc'], ['alpa', 'desc'], ['nama', 'asc']])->values();
 
         return ['rows' => $rows, 'totalKegiatan' => $kegiatanIds->count()];
-    }
-
-    public function edit(Kegiatan $kegiatan)
-    {
-        return Inertia::render('Admin/Kegiatan/Edit', [
-            'kegiatan' => $kegiatan,
-            'user' => Auth::user(),
-        ]);
     }
 
     public function update(Request $request, Kegiatan $kegiatan)
