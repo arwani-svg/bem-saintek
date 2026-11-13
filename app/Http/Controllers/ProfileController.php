@@ -28,16 +28,7 @@ class ProfileController extends Controller
     }
 
     /** Form edit identitas diri sendiri. */
-    public function edit()
-    {
-        $me = Auth::user();
-
-        return Inertia::render('Profil/Edit', [
-            'profile' => $me->fresh(),
-            'canEditPrestasi' => $me->isPengurus(),
-            'user' => $me,
-        ]);
-    }
+  
 
     /**
      * Update identitas diri sendiri.

@@ -30,13 +30,7 @@ class DepartemenController extends Controller
         ]);
     }
 
-    public function create()
-    {
-        return Inertia::render('Admin/Departemen/Create', [
-            'user' => Auth::user(),
-        ]);
-    }
-
+    
     public function store(Request $request)
     {
         $validated = $request->validate([
