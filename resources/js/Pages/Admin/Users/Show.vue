@@ -1,8 +1,8 @@
 <script setup>
 import { Head } from '@inertiajs/vue3'
 import Layout from '@/components/dashboard/Layout.vue'
-import ProfileDetail from '@/components/dashboard/ProfileDetail.vue'
-import RiwayatUser from '@/components/dashboard/RiwayatUser.vue'
+import ProfileDetail from '@/components/dashboard/profile/ProfileDetail.vue'
+import RiwayatUser from '@/components/dashboard/profile/RiwayatUser.vue'
 
 const props = defineProps({
     user: Object,

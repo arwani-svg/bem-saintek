@@ -30,14 +30,7 @@ class RolePermissionController extends Controller
 
         return Inertia::render('Admin/Roles/Index', [
             'roles' => $roles,
-            'user' => Auth::user(),
-        ]);
-    }
-
-    public function create()
-    {
-        return Inertia::render('Admin/Roles/Create', [
-            'allPermissions' => Permission::orderBy('name')->get(['id', 'name']),
+            'allPermissions' => Permission::select('id', 'name')->get(),
             'user' => Auth::user(),
         ]);
     }
@@ -58,22 +51,6 @@ class RolePermissionController extends Controller
         ActivityLog::record(Auth::user(), ActivityLog::CREATE, "Membuat role {$role->name}.");
 
         return redirect()->route('roles.index')->with('success', "Role {$role->name} berhasil dibuat.");
-    }
-
-    public function edit(Role $role)
-    {
-        $role->load('permissions');
-
-        return Inertia::render('Admin/Roles/Edit', [
-            'role' => [
-                'id' => $role->id,
-                'name' => $role->name,
-                'permissions' => $role->permissions->pluck('name')->toArray(),
-                'is_protected' => in_array($role->name, self::PROTECTED_ROLES, true),
-            ],
-            'allPermissions' => Permission::orderBy('name')->get(['id', 'name']),
-            'user' => Auth::user(),
-        ]);
     }
 
     public function update(Request $request, Role $role)
