@@ -58,19 +58,13 @@ class IuranController extends Controller
             'iurans' => $iurans,
             'filters' => $request->only(['search', 'status']),
             'statusList' => Iuran::STATUS,
-            'user' => Auth::user(),
-        ]);
-    }
-
-    /** Form buat iuran baru + picker peserta (cari by nama/role/prodi). */
-    public function create()
-    {
-        return Inertia::render('Admin/Iuran/Create', [
             'prodiList' => User::PRODI,
             'rolesList' => Role::orderBy('name')->pluck('name'),
             'user' => Auth::user(),
         ]);
     }
+
+    /** Form buat iuran baru + picker peserta (cari by nama/role/prodi). */
 
     /** Endpoint JSON untuk picker peserta: ?search=&prodi=&role=&limit=20 */
     public function cariUser(Request $request)
@@ -132,7 +126,7 @@ class IuranController extends Controller
             return $iuran;
         });
 
-        ActivityLog::record(Auth::user(), ActivityLog::CREATE, "Membuat iuran {$iuran->nama} Rp ".number_format($iuran->nominal, 0, ',', '.').' untuk '.count($validated['peserta_ids']).' peserta.');
+        ActivityLog::record(Auth::user(), ActivityLog::CREATE, "Membuat iuran {$iuran->nama} Rp " . number_format($iuran->nominal, 0, ',', '.') . ' untuk ' . count($validated['peserta_ids']) . ' peserta.');
 
         return redirect()->route('iuran.show', $iuran)->with('success', 'Iuran berhasil dibuat.');
     }
@@ -140,13 +134,13 @@ class IuranController extends Controller
     /** Detail iuran: siapa sudah/belum + sisa per orang (mendukung cicilan). */
     public function show(Request $request, Iuran $iuran)
     {
-        $pesertaQuery = $iuran->pesertas()->with(['user:id,name,nim,foto,prodi,role', 'pembayarans' => fn ($q) => $q->latest()]);
+        $pesertaQuery = $iuran->pesertas()->with(['user:id,name,nim,foto,prodi,role', 'pembayarans' => fn($q) => $q->latest()]);
 
         if ($search = $request->input('search', '')) {
-            $pesertaQuery->whereHas('user', fn ($q) => $q->where('name', 'like', "%{$search}%")->orWhere('nim', 'like', "%{$search}%"));
+            $pesertaQuery->whereHas('user', fn($q) => $q->where('name', 'like', "%{$search}%")->orWhere('nim', 'like', "%{$search}%"));
         }
         if ($request->filled('prodi')) {
-            $pesertaQuery->whereHas('user', fn ($q) => $q->where('prodi', $request->input('prodi')));
+            $pesertaQuery->whereHas('user', fn($q) => $q->where('prodi', $request->input('prodi')));
         }
 
         $semua = $pesertaQuery->get();
@@ -165,7 +159,7 @@ class IuranController extends Controller
                 'sisa' => $sisa,
                 'status_bayar' => $status,
                 'user' => $p->user,
-                'pembayarans' => $p->pembayarans->map(fn ($b) => [
+                'pembayarans' => $p->pembayarans->map(fn($b) => [
                     'id' => $b->id,
                     'jumlah' => (int) $b->jumlah,
                     'tanggal' => $b->tanggal,
@@ -179,7 +173,7 @@ class IuranController extends Controller
         }
 
         $target = (int) $semua->sum('nominal_wajib');
-        $terkumpul = (int) $semua->sum(fn ($p) => (int) $p->pembayarans->sum('jumlah'));
+        $terkumpul = (int) $semua->sum(fn($p) => (int) $p->pembayarans->sum('jumlah'));
 
         return Inertia::render('Admin/Iuran/Show', [
             'iuran' => $iuran,
@@ -200,15 +194,7 @@ class IuranController extends Controller
         ]);
     }
 
-    public function edit(Iuran $iuran)
-    {
-        return Inertia::render('Admin/Iuran/Edit', [
-            'iuran' => $iuran,
-            'user' => Auth::user(),
-        ]);
-    }
-
-    public function update(Request $request, Iuran $iuran)
+  public function update(Request $request, Iuran $iuran)
     {
         $validated = $request->validate([
             'nama' => 'required|string|max:150',
@@ -237,7 +223,7 @@ class IuranController extends Controller
             }
         });
 
-        ActivityLog::record(Auth::user(), ActivityLog::DELETE, "Menghapus iuran {$nama} beserta ".count($transaksiIds).' catatan kas terkait.');
+        ActivityLog::record(Auth::user(), ActivityLog::DELETE, "Menghapus iuran {$nama} beserta " . count($transaksiIds) . ' catatan kas terkait.');
 
         return redirect()->route('iuran.index')->with('success', 'Iuran berhasil dihapus.');
     }
@@ -275,7 +261,7 @@ class IuranController extends Controller
         ]);
         $sudah = (int) $peserta->pembayarans()->sum('jumlah');
         if ($validated['nominal_wajib'] < $sudah) {
-            return back()->withErrors(['nominal_wajib' => 'Nominal tidak boleh lebih kecil dari yang sudah dibayar ('.number_format($sudah, 0, ',', '.').').']);
+            return back()->withErrors(['nominal_wajib' => 'Nominal tidak boleh lebih kecil dari yang sudah dibayar (' . number_format($sudah, 0, ',', '.') . ').']);
         }
         $peserta->update($validated);
 
@@ -321,14 +307,14 @@ class IuranController extends Controller
             return back()->withErrors(['jumlah' => 'Peserta ini sudah lunas.']);
         }
         if ($validated['jumlah'] > $sisa) {
-            return back()->withErrors(['jumlah' => 'Melebihi sisa tagihan ('.number_format($sisa, 0, ',', '.').').']);
+            return back()->withErrors(['jumlah' => 'Melebihi sisa tagihan (' . number_format($sisa, 0, ',', '.') . ').']);
         }
 
         DB::transaction(function () use ($validated, $peserta, $iuran) {
             $transaksi = TransaksiKeuangan::create([
                 'tipe' => TransaksiKeuangan::TIPE_MASUK,
                 'kategori' => 'Kas Anggota',
-                'keterangan' => "Iuran {$iuran->nama} — {$peserta->user?->name}".($validated['keterangan'] ? " ({$validated['keterangan']})" : ''),
+                'keterangan' => "Iuran {$iuran->nama} — {$peserta->user?->name}" . ($validated['keterangan'] ? " ({$validated['keterangan']})" : ''),
                 'jumlah' => $validated['jumlah'],
                 'tanggal' => $validated['tanggal'],
                 'created_by' => Auth::id(),
@@ -344,7 +330,7 @@ class IuranController extends Controller
             ]);
         });
 
-        ActivityLog::record(Auth::user(), ActivityLog::CREATE, "Mencatat iuran {$iuran->nama} Rp ".number_format($validated['jumlah'], 0, ',', '.')." a.n. {$peserta->user?->name}.");
+        ActivityLog::record(Auth::user(), ActivityLog::CREATE, "Mencatat iuran {$iuran->nama} Rp " . number_format($validated['jumlah'], 0, ',', '.') . " a.n. {$peserta->user?->name}.");
 
         return back()->with('success', 'Pembayaran tercatat dan otomatis masuk kas.');
     }

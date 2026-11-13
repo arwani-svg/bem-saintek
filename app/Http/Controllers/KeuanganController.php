@@ -36,15 +36,7 @@ class KeuanganController extends Controller
         ]);
     }
 
-    public function create()
-    {
-        return Inertia::render('Admin/Keuangan/Create', [
-            'kategoriMasuk' => TransaksiKeuangan::KATEGORI_MASUK,
-            'kategoriKeluar' => TransaksiKeuangan::KATEGORI_KELUAR,
-            'user' => Auth::user(),
-        ]);
-    }
-
+    
     public function store(Request $request)
     {
         $validated = $request->validate($this->rules());
@@ -56,16 +48,6 @@ class KeuanganController extends Controller
         ActivityLog::record(Auth::user(), ActivityLog::CREATE, "Mencatat transaksi {$validated['tipe']} Rp ".number_format($validated['jumlah'], 0, ',', '.')." ({$validated['kategori']}).");
 
         return redirect()->route('keuangan.index')->with('success', 'Transaksi berhasil dicatat.');
-    }
-
-    public function edit(TransaksiKeuangan $keuangan)
-    {
-        return Inertia::render('Admin/Keuangan/Edit', [
-            'transaksi' => $keuangan,
-            'kategoriMasuk' => TransaksiKeuangan::KATEGORI_MASUK,
-            'kategoriKeluar' => TransaksiKeuangan::KATEGORI_KELUAR,
-            'user' => Auth::user(),
-        ]);
     }
 
     public function update(Request $request, TransaksiKeuangan $keuangan)

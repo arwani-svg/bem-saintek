@@ -41,20 +41,12 @@ class ProgramKerjaController extends Controller
             'prokers' => $prokers,
             'filters' => $request->only(['search', 'departemen_id', 'status']),
             'departemens' => Departemen::orderBy('nama')->get(['id', 'nama']),
+            'warnaList' => ProgramKerja::WARNA,
             'statusList' => ProgramKerja::STATUS,
             'user' => Auth::user(),
         ]);
     }
 
-    public function create()
-    {
-        return Inertia::render('Admin/Proker/Create', [
-            'departemens' => Departemen::orderBy('nama')->get(['id', 'nama', 'kepanjangan']),
-            'statusList' => ProgramKerja::STATUS,
-            'warnaList' => ProgramKerja::WARNA,
-            'user' => Auth::user(),
-        ]);
-    }
 
     public function store(Request $request)
     {
@@ -79,17 +71,6 @@ class ProgramKerjaController extends Controller
         ActivityLog::record(Auth::user(), ActivityLog::CREATE, "Membuat program kerja {$validated['judul']}.");
 
         return redirect()->route('proker.index')->with('success', 'Program kerja berhasil dibuat.');
-    }
-
-    public function edit(ProgramKerja $proker)
-    {
-        return Inertia::render('Admin/Proker/Edit', [
-            'proker' => $proker,
-            'departemens' => Departemen::orderBy('nama')->get(['id', 'nama', 'kepanjangan']),
-            'statusList' => ProgramKerja::STATUS,
-            'warnaList' => ProgramKerja::WARNA,
-            'user' => Auth::user(),
-        ]);
     }
 
     public function update(Request $request, ProgramKerja $proker)
